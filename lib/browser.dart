@@ -17,7 +17,7 @@ import 'empty_tab.dart';
 import 'models/browser_model.dart';
 
 class Browser extends StatefulWidget {
-  const Browser({Key? key}) : super(key: key);
+  const Browser({super.key});
 
   @override
   State<Browser> createState() => _BrowserState();
@@ -50,10 +50,6 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   restore() async {
     var browserModel = Provider.of<BrowserModel>(context, listen: true);

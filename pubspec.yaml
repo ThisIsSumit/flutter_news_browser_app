@@ -35,6 +35,29 @@ dependencies:
 
   # For material you.
   dynamic_color: ^1.6.8
+  cupertino_icons: ^1.0.6
+  ferry: ^0.16.0+1
+  gql_http_link: ^1.0.1+1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  ferry_hive_store: ^0.5.2
+  ferry_flutter: ^0.9.0-dev.3
+  xml: ^6.5.0
+  http: ^1.2.0
+  convert: ^3.1.1
+
+  gql: any
+  built_collection: any
+  built_value: any
+  ferry_exec: any
+  gql_exec: any
+  gql_code_builder: any
+  cached_network_image: ^3.3.1
+  timeago: ^3.6.1
+  intl: ^0.19.0
+  webview_flutter: ^2.8.0
+  google_generative_ai: ^0.2.0
+  html: ^0.15.4
 
   flutter_inappwebview: ^6.0.0-beta.32
   flutter_downloader: ^1.11.5
@@ -42,7 +65,7 @@ dependencies:
   permission_handler: ^11.0.1
   provider: ^6.1.1
   share_plus: ^7.2.1
-  share_extend: ^2.0.0
+  # share_extend: ^2.0.0
   # charts_flutter: ^0.9.0
   crypto: ^3.0.3
   shared_preferences: ^2.2.2
@@ -52,20 +75,22 @@ dependencies:
   flutter_svg: ^2.0.9
   mime: ^1.0.4
   url_launcher: ^6.2.1
-  cached_network_image: ^3.3.0
-  flutter_colorpicker: ^1.0.3
-  intl: ^0.18.1
+  
+  flutter_colorpicker: ^1.1.0
+  
   uuid: ^4.2.1
   collection: ^1.17.1
+  share_extend: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  ferry_generator: ^0.10.0
+  build_runner: ^2.1.7
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -97,6 +122,8 @@ flutter:
     - assets/images/duckduckgo_logo.png
     - assets/images/ecosia_logo.png
     - assets/icon/icon.png
+    - assets/images/news.jpeg
+    - assets/js/custom.js
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

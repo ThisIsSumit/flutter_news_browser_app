@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_browser/models/web_archive_model.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -99,6 +100,8 @@ class BrowserModel extends ChangeNotifier {
       UnmodifiableMapView(_webArchives);
 
   void addTab(WebViewTab webViewTab) {
+    // var browserModel = Provider.of<BrowserModel>(context, listen: true);
+   
     _webViewTabs.add(webViewTab);
     _currentTabIndex = _webViewTabs.length - 1;
     webViewTab.webViewModel.tabIndex = _currentTabIndex;
