@@ -1,6 +1,6 @@
 
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/fetch_feeds_by_category.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/fetch_feeds_by_category.dart';
 
 class FeedsByCategoryController {
   late Future<List<GGetFeedsByCategoryData_getFeeds>> categoryFeeds;

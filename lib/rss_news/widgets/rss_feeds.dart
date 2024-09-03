@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/src/constants/constants.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +17,7 @@ import '../models/feed_item.dart';
 
 class RSSFeedScreen extends StatefulWidget {
   final List<String> feedUrls;
-  const RSSFeedScreen({super.key, required this.feedUrls});
+  const RSSFeedScreen({Key? key, required this.feedUrls});
   // WebViewTabAppBar _webViewTabAppBar = new WebViewTabAppBar();
   @override
   State<RSSFeedScreen> createState() => _RSSFeedScreenState();

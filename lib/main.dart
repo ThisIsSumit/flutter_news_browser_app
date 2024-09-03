@@ -1,7 +1,7 @@
 import 'package:ferry/ferry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/client/client.dart';
+import 'package:flutter_browser/rss_news/client/client.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -67,13 +67,13 @@ void main() async {
 }
 
 class FlutterBrowserApp extends StatelessWidget {
-  const FlutterBrowserApp({super.key});
+  const FlutterBrowserApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flutter Browser',
       debugShowCheckedModeBanner: false,
-      title: 'News Browser ',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,

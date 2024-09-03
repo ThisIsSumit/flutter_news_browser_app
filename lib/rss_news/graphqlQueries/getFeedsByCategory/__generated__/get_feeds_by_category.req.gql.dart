@@ -7,11 +7,11 @@ import 'package:built_value/serializer.dart';
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 import 'package:flutter_browser/__generated__/serializers.gql.dart' as _i6;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.ast.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.ast.gql.dart'
     as _i5;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart'
     as _i2;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.var.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.var.gql.dart'
     as _i3;
 
 part 'get_feeds_by_category.req.gql.g.dart';

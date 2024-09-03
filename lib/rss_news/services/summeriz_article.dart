@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/utils/utils.dart';
+import 'package:flutter_browser/rss_news/utils/utils.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 

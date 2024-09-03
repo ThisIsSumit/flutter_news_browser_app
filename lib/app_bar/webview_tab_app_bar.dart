@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/app_bar/url_info_popup.dart';
+
 import 'package:flutter_browser/custom_image.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/models/browser_model.dart';
@@ -82,6 +83,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     super.dispose();
   }
 
+  void _showEmptyTab() {
+    setState(() {
+      var browserModel = Provider.of<BrowserModel>(context, listen: false);
+      browserModel.webViewTabs.clear(); // Clear existing tabs
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Selector<WebViewModel, WebUri?>(
@@ -121,27 +129,10 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
   Widget? _buildAppBarHomePageWidget() {
     var browserModel = Provider.of<BrowserModel>(context, listen: true);
-    var settings = browserModel.getSettings();
-
-    var webViewModel = Provider.of<WebViewModel>(context, listen: true);
-    var webViewController = webViewModel.webViewController;
-
-    if (!settings.homePageEnabled) {
-      return null;
-    }
-
     return IconButton(
       icon: const Icon(Icons.home),
       onPressed: () {
-        if (webViewController != null) {
-          var url =
-              settings.homePageEnabled && settings.customUrlHomePage.isNotEmpty
-                  ? WebUri(settings.customUrlHomePage)
-                  : WebUri(settings.searchEngine.url);
-          webViewController.loadUrl(urlRequest: URLRequest(url: url));
-        } else {
-          addNewTab();
-        }
+        browserModel.openEmptyTab();
       },
     );
   }
@@ -154,7 +145,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     var webViewController = webViewModel.webViewController;
 
     return SizedBox(
-      height: 44.0,
+      height: 47,
       child: Stack(
         children: <Widget>[
           TextField(
@@ -723,13 +714,9 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         showWebArchives();
         break;
       case PopupMenuActions.FIND_ON_PAGE:
-        var isFindInteractionEnabled =
-            currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
-        var findInteractionController =
-            currentWebViewModel.findInteractionController;
-        if (Util.isIOS() &&
-            isFindInteractionEnabled &&
-            findInteractionController != null) {
+        var isFindInteractionEnabled = currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
+        var findInteractionController = currentWebViewModel.findInteractionController;
+        if (Util.isIOS() && isFindInteractionEnabled && findInteractionController != null) {
           await findInteractionController.presentFindNavigator();
         } else if (widget.showFindOnPage != null) {
           widget.showFindOnPage!();
@@ -1010,8 +997,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
       var currentSettings = await webViewController.getSettings();
       if (currentSettings != null) {
-        currentSettings.preferredContentMode =
-            webViewModel?.isDesktopMode ?? false
+        currentSettings.preferredContentMode = webViewModel?.isDesktopMode ?? false
                 ? UserPreferredContentMode.DESKTOP
                 : UserPreferredContentMode.RECOMMENDED;
         await webViewController.setSettings(settings: currentSettings);

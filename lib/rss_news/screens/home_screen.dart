@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/controller/feeds_by_category_controller.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/fetch_feeds.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
-import 'package:flutter_browser/src/screens/category_selection_screen.dart';
-import 'package:flutter_browser/src/widgets/home_feeds.dart';
-import 'package:flutter_browser/src/widgets/nav_bar.dart';
+import 'package:flutter_browser/rss_news/controller/feeds_by_category_controller.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
+import 'package:flutter_browser/rss_news/screens/category_selection_screen.dart';
+import 'package:flutter_browser/rss_news/widgets/home_feeds.dart';
+import 'package:flutter_browser/rss_news/widgets/nav_bar.dart';
 import 'package:hive/hive.dart';
 
 import '../widgets/custom_category_feeds.dart';
 import 'language_selection_screen.dart'; // Import the screen here
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

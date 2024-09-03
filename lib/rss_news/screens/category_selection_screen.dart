@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/fetch_feeds.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
 import 'package:hive/hive.dart';
-import 'package:flutter_browser/src/constants/constants.dart';
-import 'package:flutter_browser/src/screens/sources_selection_screen.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:flutter_browser/rss_news/screens/sources_selection_screen.dart';
 
 class CategoriesSelectionScreen extends StatefulWidget {
-  const CategoriesSelectionScreen({super.key});
+  const CategoriesSelectionScreen({Key? key});
 
   @override
   State<CategoriesSelectionScreen> createState() =>
@@ -44,10 +44,9 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
         _filteredCategories = categories;
         _isLoading = false;
       });
-    }
-    else{
+    } else {
       setState(() {
-        _isLoading=false;
+        _isLoading = false;
         throw const Text("language is not set");
       });
     }
@@ -87,7 +86,6 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

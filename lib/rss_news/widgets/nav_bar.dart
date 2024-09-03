@@ -5,7 +5,7 @@ class NavBar extends StatefulWidget {
   final String selectedCategory;
   final Function(String) onCategoryTap;
   const NavBar({
-    super.key,
+    Key? key,
     required this.categories,
     required this.selectedCategory,
     required this.onCategoryTap,

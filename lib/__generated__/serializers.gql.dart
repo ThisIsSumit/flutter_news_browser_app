@@ -9,17 +9,17 @@ import 'package:gql_code_builder/src/serializers/operation_serializer.dart'
     show OperationSerializer;
 import 'package:flutter_browser/__generated__/schema.schema.gql.dart'
     show GFeedFilterInput;
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart'
     show GGetFeedsData, GGetFeedsData_getFeeds;
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/__generated__/get_feed.req.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.req.gql.dart'
     show GGetFeedsReq;
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/__generated__/get_feed.var.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.var.gql.dart'
     show GGetFeedsVars;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart'
     show GGetFeedsByCategoryData, GGetFeedsByCategoryData_getFeeds;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.req.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.req.gql.dart'
     show GGetFeedsByCategoryReq;
-import 'package:flutter_browser/src/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.var.gql.dart'
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.var.gql.dart'
     show GGetFeedsByCategoryVars;
 
 part 'serializers.gql.g.dart';

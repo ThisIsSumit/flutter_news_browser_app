@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/main.dart';
-import 'package:flutter_browser/src/graphqlQueries/getFeeds/fetch_feeds.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
 import 'package:hive/hive.dart';
 
 class SourcesSelectionScreen extends StatefulWidget {
-  const SourcesSelectionScreen({super.key});
+  const SourcesSelectionScreen({Key? key});
 
   @override
   State<SourcesSelectionScreen> createState() => _SourcesSelectionScreenState();

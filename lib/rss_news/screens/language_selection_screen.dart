@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/screens/category_selection_screen.dart';
+import 'package:flutter_browser/rss_news/screens/category_selection_screen.dart';
 import 'package:hive_flutter/adapters.dart';
 
 import '../constants/constants.dart';
 
-
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({
-    super.key,
+    Key? key,
   });
 
   @override
@@ -18,22 +17,22 @@ class LanguageSelectionScreen extends StatefulWidget {
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   List<String> selectedLanguages = [];
 
-  Future<void> _handleLanguageSelection(Language language, bool isSelected) async {
+  Future<void> _handleLanguageSelection(
+      Language language, bool isSelected) async {
     setState(() {
       if (isSelected) {
-        selectedLanguages.add(language.name.substring(0,2).toLowerCase());
+        selectedLanguages.add(language.name.substring(0, 2).toLowerCase());
       } else {
-        selectedLanguages.remove(language.name.substring(0,2).toLowerCase());
+        selectedLanguages.remove(language.name.substring(0, 2).toLowerCase());
       }
     });
-
   }
 
   Future<void> _submit() async {
     if (selectedLanguages.isNotEmpty) {
-
       final box = Hive.box<List<String>>('preferences');
-      await box.put('selectedLanguages', selectedLanguages.map((e) => e.toString()).toList());
+      await box.put('selectedLanguages',
+          selectedLanguages.map((e) => e.toString()).toList());
       // debugPrint(selectedLanguages.toString());
       Navigator.pushReplacement(
         context,
@@ -70,7 +69,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             ),
             const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0,),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 40.0,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
@@ -86,21 +87,24 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 ),
                 child: ListView(
                   shrinkWrap: true,
-                  children: Language.values.map((language) {
-                    return CheckboxListTile(
-                      title: Text(
-                        language.toString().split('.').last,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      value: selectedLanguages.contains(language.name.substring(0,2).toLowerCase()),
-                      onChanged: (bool? value) {
-                        if (value != null) {
-                          _handleLanguageSelection(language, value);
-                        }
-                      },
-                      activeColor: Colors.lightBlue,
-                    );
-                  },).toList(),
+                  children: Language.values.map(
+                    (language) {
+                      return CheckboxListTile(
+                        title: Text(
+                          language.toString().split('.').last,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        value: selectedLanguages.contains(
+                            language.name.substring(0, 2).toLowerCase()),
+                        onChanged: (bool? value) {
+                          if (value != null) {
+                            _handleLanguageSelection(language, value);
+                          }
+                        },
+                        activeColor: Colors.lightBlue,
+                      );
+                    },
+                  ).toList(),
                 ),
               ),
             ),
@@ -110,7 +114,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.lightBlue,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 textStyle: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

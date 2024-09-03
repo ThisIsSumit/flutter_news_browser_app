@@ -7,23 +7,18 @@ class CustomPopupDialogPageRoute<T> extends MaterialTransparentPageRoute<T> {
   bool isPopped = false;
 
   CustomPopupDialogPageRoute({
-    required super.builder,
+    required WidgetBuilder builder,
     Duration? transitionDuration,
     Color? overlayColor,
-    super.settings,
+    RouteSettings? settings,
   })  : overlayColor = overlayColor ?? Colors.black.withOpacity(0.5),
-        customTransitionDuration = transitionDuration;
+        customTransitionDuration = transitionDuration,
+        super(builder: builder, settings: settings);
 
   @override
   Duration get transitionDuration => customTransitionDuration != null
       ? customTransitionDuration!
       : const Duration(milliseconds: 300);
-
-  @override
-  bool didPop(T? result) {
-    isPopped = true;
-    return super.didPop(result);
-  }
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
@@ -59,9 +54,10 @@ class CustomPopupDialog extends StatefulWidget {
   final Duration transitionDuration;
 
   const CustomPopupDialog(
-      {super.key,
+      {Key? key,
       required this.child,
-      this.transitionDuration = const Duration(milliseconds: 300)});
+      this.transitionDuration = const Duration(milliseconds: 300)})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomPopupDialogState();

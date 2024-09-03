@@ -17,7 +17,7 @@ import 'empty_tab.dart';
 import 'models/browser_model.dart';
 
 class Browser extends StatefulWidget {
-  const Browser({super.key});
+  const Browser({Key? key}) : super(key: key);
 
   @override
   State<Browser> createState() => _BrowserState();
@@ -50,6 +50,10 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   restore() async {
     var browserModel = Provider.of<BrowserModel>(context, listen: true);
@@ -136,13 +140,13 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
   Widget _buildWebViewTabsContent() {
     var browserModel = Provider.of<BrowserModel>(context, listen: true);
 
-    if (browserModel.webViewTabs.isEmpty) {
+    if (browserModel.webViewTabs.isEmpty || browserModel.homePage == false) {
       return const EmptyTab();
     }
 
     for (final webViewTab in browserModel.webViewTabs) {
-      var isCurrentTab = webViewTab.webViewModel.tabIndex ==
-          browserModel.getCurrentTabIndex();
+      var isCurrentTab =
+          webViewTab.webViewModel.tabIndex == browserModel.getCurrentTabIndex();
 
       if (isCurrentTab) {
         Future.delayed(const Duration(milliseconds: 100), () {

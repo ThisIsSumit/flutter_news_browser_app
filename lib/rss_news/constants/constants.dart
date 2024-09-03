@@ -8,7 +8,7 @@ enum Language {
 }
 
 class Loader extends StatelessWidget {
-  const Loader({super.key});
+  const Loader({Key? key});
 
   @override
   Widget build(BuildContext context) {

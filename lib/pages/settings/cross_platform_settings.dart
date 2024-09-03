@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../../project_info_popup.dart';
 
 class CrossPlatformSettings extends StatefulWidget {
-  const CrossPlatformSettings({super.key});
+  const CrossPlatformSettings({Key? key}) : super(key: key);
 
   @override
   State<CrossPlatformSettings> createState() => _CrossPlatformSettingsState();
@@ -73,70 +73,6 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
             );
           }).toList(),
         ),
-      ),
-      ListTile(
-        title: const Text("Home page"),
-        subtitle: Text(settings.homePageEnabled
-            ? (settings.customUrlHomePage.isEmpty
-                ? "ON"
-                : settings.customUrlHomePage)
-            : "OFF"),
-        onTap: () {
-          _customHomePageController.text = settings.customUrlHomePage;
-
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                contentPadding: const EdgeInsets.all(0.0),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return SwitchListTile(
-                          title: Text(settings.homePageEnabled ? "ON" : "OFF"),
-                          value: settings.homePageEnabled,
-                          onChanged: (value) {
-                            setState(() {
-                              settings.homePageEnabled = value;
-                              browserModel.updateSettings(settings);
-                            });
-                          },
-                        );
-                      },
-                    ),
-                    StatefulBuilder(builder: (context, setState) {
-                      return ListTile(
-                        enabled: settings.homePageEnabled,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextField(
-                                onSubmitted: (value) {
-                                  setState(() {
-                                    settings.customUrlHomePage = value;
-                                    browserModel.updateSettings(settings);
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                keyboardType: TextInputType.url,
-                                decoration: const InputDecoration(
-                                    hintText: 'Custom URL Home Page'),
-                                controller: _customHomePageController,
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    })
-                  ],
-                ),
-              );
-            },
-          );
-        },
       ),
       FutureBuilder(
         future: InAppWebViewController.getDefaultUserAgent(),

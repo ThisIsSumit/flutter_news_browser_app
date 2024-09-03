@@ -11,7 +11,8 @@ class ScrollableTab extends StatefulWidget {
   final Function? onTap;
 
   const ScrollableTab(
-      {super.key, required this.child, this.top = 0.0, this.onTap});
+      {Key? key, required this.child, this.top = 0.0, this.onTap})
+      : super(key: key);
 
   @override
   State<ScrollableTab> createState() => _ScrollableTabState();
@@ -51,7 +52,8 @@ class TabViewer extends StatefulWidget {
   final Function(int index)? onTap;
 
   const TabViewer(
-      {super.key, required this.children, this.onTap, this.currentIndex = 0});
+      {Key? key, required this.children, this.onTap, this.currentIndex = 0})
+      : super(key: key);
 
   @override
   State<TabViewer> createState() => _TabViewerState();

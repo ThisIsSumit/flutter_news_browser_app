@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/src/constants/constants.dart';
-import 'package:flutter_browser/src/widgets/rss_feeds.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:flutter_browser/rss_news/widgets/rss_feeds.dart';
 
 import '../graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
 
 class CustomCategoryFeeds extends StatefulWidget {
   final List<GGetFeedsByCategoryData_getFeeds> feedsByACategory;
-  const CustomCategoryFeeds({super.key, required this.feedsByACategory});
+  const CustomCategoryFeeds({Key? key, required this.feedsByACategory});
 
   @override
   State<CustomCategoryFeeds> createState() => _CustomCategoryFeedsState();
 }
 
 class _CustomCategoryFeedsState extends State<CustomCategoryFeeds> {
-
   List<String> feedUrls = [];
   bool isLoading = true;
 
@@ -23,7 +22,7 @@ class _CustomCategoryFeedsState extends State<CustomCategoryFeeds> {
     });
     try {
       final List<GGetFeedsByCategoryData_getFeeds> feeds =
-      widget.feedsByACategory;
+          widget.feedsByACategory;
       setState(() {
         feedUrls =
             feeds.map((feed) => '${feed.feed_url}*${feed.source}').toList();
@@ -35,6 +34,7 @@ class _CustomCategoryFeedsState extends State<CustomCategoryFeeds> {
       isLoading = false;
     });
   }
+
   @override
   void initState() {
     // debugPrint('init state of custom category feeds');
@@ -48,9 +48,9 @@ class _CustomCategoryFeedsState extends State<CustomCategoryFeeds> {
     if (widget.feedsByACategory != oldWidget.feedsByACategory) {
       _populateFeedUrls();
     }
-
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     // debugPrint('c${feedUrls.toString()}');
     return isLoading

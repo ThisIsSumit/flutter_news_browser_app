@@ -4,10 +4,11 @@ import 'package:hive/hive.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../services/summeriz_article.dart';
+
 class NewsWebView extends StatefulWidget {
   final String url;
   const NewsWebView({
-    super.key,
+    Key? key,
     required this.url,
   });
 
@@ -77,4 +78,3 @@ class _NewsWebViewState extends State<NewsWebView> {
     );
   }
 }
-  

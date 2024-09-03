@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 class MaterialTransparentPageRoute<T> extends PageRoute<T> {
   MaterialTransparentPageRoute({
     required this.builder,
-    super.fullscreenDialog,
-    super.settings,
-  });
+    bool fullscreenDialog = false,
+    RouteSettings? settings,
+  }) : super(settings: settings, fullscreenDialog: fullscreenDialog);
 
   final WidgetBuilder builder;
 

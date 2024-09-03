@@ -24,7 +24,7 @@ class LongPressAlertDialog extends StatefulWidget {
   ];
 
   const LongPressAlertDialog(
-      {super.key,
+      {Key? key,
       required this.webViewModel,
       required this.hitTestResult,
       this.requestFocusNodeHrefResult});
@@ -214,7 +214,8 @@ class _LongPressAlertDialogState extends State<LongPressAlertDialog> {
       onTap: () {
         Clipboard.setData(ClipboardData(
             text: widget.requestFocusNodeHrefResult?.url.toString() ??
-                widget.hitTestResult.extra ?? ''));
+                widget.hitTestResult.extra ??
+                ''));
         Navigator.pop(context);
       },
     );
