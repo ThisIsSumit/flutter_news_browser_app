@@ -1,0 +1,12 @@
+  query GetFeedsByCategory($category: String) {
+    getFeeds(filter: {
+      category: $category,
+    }) {
+      weight
+      feed_url
+      _id
+      language
+      category
+      source
+    }
+  }

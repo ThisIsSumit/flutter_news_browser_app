@@ -71,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 onSelected: _popupMenuChoiceAction,
                 itemBuilder: (context) {
                   var items = [
-                    CustomPopupMenuItem<String>(
+                    const CustomPopupMenuItem<String>(
                       enabled: true,
                       value: PopupSettingsMenuActions.RESET_BROWSER_SETTINGS,
                       child: Row(

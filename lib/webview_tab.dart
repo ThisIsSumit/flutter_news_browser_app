@@ -43,9 +43,7 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
     _pullToRefreshController = kIsWeb
         ? null
         : PullToRefreshController(
-            settings: PullToRefreshSettings(
-              color: Colors.blue
-            ),
+            settings: PullToRefreshSettings(color: Colors.blue),
             onRefresh: () async {
               if (defaultTargetPlatform == TargetPlatform.android) {
                 _webViewController?.reload();
@@ -175,7 +173,8 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         _webViewController = controller;
         widget.webViewModel.webViewController = controller;
         widget.webViewModel.pullToRefreshController = _pullToRefreshController;
-        widget.webViewModel.findInteractionController = _findInteractionController;
+        widget.webViewModel.findInteractionController =
+            _findInteractionController;
 
         if (Util.isAndroid()) {
           controller.startSafeBrowsing();

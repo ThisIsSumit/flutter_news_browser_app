@@ -140,13 +140,13 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
   Widget _buildWebViewTabsContent() {
     var browserModel = Provider.of<BrowserModel>(context, listen: true);
 
-    if (browserModel.webViewTabs.isEmpty) {
+    if (browserModel.webViewTabs.isEmpty || browserModel.homePage == false) {
       return const EmptyTab();
     }
 
     for (final webViewTab in browserModel.webViewTabs) {
-      var isCurrentTab = webViewTab.webViewModel.tabIndex ==
-          browserModel.getCurrentTabIndex();
+      var isCurrentTab =
+          webViewTab.webViewModel.tabIndex == browserModel.getCurrentTabIndex();
 
       if (isCurrentTab) {
         Future.delayed(const Duration(milliseconds: 100), () {

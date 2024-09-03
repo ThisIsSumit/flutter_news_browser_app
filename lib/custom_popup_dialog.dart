@@ -21,12 +21,6 @@ class CustomPopupDialogPageRoute<T> extends MaterialTransparentPageRoute<T> {
       : const Duration(milliseconds: 300);
 
   @override
-  bool didPop(T? result) {
-    isPopped = true;
-    return super.didPop(result);
-  }
-
-  @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     return Scaffold(

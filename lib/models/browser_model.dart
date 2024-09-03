@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_browser/models/web_archive_model.dart';
@@ -70,6 +70,7 @@ class BrowserModel extends ChangeNotifier {
   final List<FavoriteModel> _favorites = [];
   final List<WebViewTab> _webViewTabs = [];
   final Map<String, WebArchiveModel> _webArchives = {};
+  bool _homePage = true;
   int _currentTabIndex = -1;
   BrowserSettings _settings = BrowserSettings();
   late WebViewModel _currentWebViewModel;
@@ -97,18 +98,25 @@ class BrowserModel extends ChangeNotifier {
 
   UnmodifiableMapView<String, WebArchiveModel> get webArchives =>
       UnmodifiableMapView(_webArchives);
+  bool get homePage => _homePage;
+  set homePage(bool value) {
+    if (value != _homePage) {
+      _homePage = value;
+      notifyListeners();
+    }
+  }
 
   void addTab(WebViewTab webViewTab) {
+    _homePage = true;
     _webViewTabs.add(webViewTab);
     _currentTabIndex = _webViewTabs.length - 1;
     webViewTab.webViewModel.tabIndex = _currentTabIndex;
-
     _currentWebViewModel.updateWithValue(webViewTab.webViewModel);
-
     notifyListeners();
   }
 
   void addTabs(List<WebViewTab> webViewTabs) {
+    _homePage = true;
     for (var webViewTab in webViewTabs) {
       _webViewTabs.add(webViewTab);
       webViewTab.webViewModel.tabIndex = _webViewTabs.length - 1;
@@ -154,12 +162,18 @@ class BrowserModel extends ChangeNotifier {
 
   void closeAllTabs() {
     for (final webViewTab in _webViewTabs) {
-      InAppWebViewController.disposeKeepAlive(webViewTab.webViewModel.keepAlive);
+      InAppWebViewController.disposeKeepAlive(
+          webViewTab.webViewModel.keepAlive);
     }
     _webViewTabs.clear();
     _currentTabIndex = -1;
     _currentWebViewModel.updateWithValue(WebViewModel());
 
+    notifyListeners();
+  }
+
+  void openEmptyTab() {
+    _homePage = false;
     notifyListeners();
   }
 

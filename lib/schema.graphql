@@ -1,0 +1,24 @@
+type Feed {
+  _id: ID!
+  weight: Int!
+  category: String!
+  source: String!
+  language: String!
+  feed_url: String!
+}
+
+input FeedFilterInput {
+  weight: Int
+  category: String
+  source: String
+  language: String
+  feed_url: String
+}
+
+type Query {
+  getFeeds(filter: FeedFilterInput): [Feed!]!
+}
+
+type Mutation {
+  updateFeeds: String
+}

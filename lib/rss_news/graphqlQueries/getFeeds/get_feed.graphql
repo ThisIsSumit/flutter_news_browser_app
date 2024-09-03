@@ -1,0 +1,10 @@
+query GetFeeds {
+  getFeeds {
+    weight
+    feed_url
+    _id
+    language
+    category
+    source
+  }
+}
