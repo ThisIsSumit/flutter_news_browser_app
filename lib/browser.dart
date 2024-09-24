@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/custom_image.dart';
+import 'package:flutter_browser/pages/settings/adRemoverSettings.dart';
 import 'package:flutter_browser/tab_viewer.dart';
 import 'package:flutter_browser/app_bar/browser_app_bar.dart';
 import 'package:flutter_browser/models/webview_model.dart';
@@ -133,6 +134,12 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
             }
           },
           child: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.ads_click),
+              onPressed: (){
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> AdRemoverSettings(),),);
+              },
+            ),
               appBar: const BrowserAppBar(), body: _buildWebViewTabsContent()),
         ));
   }
