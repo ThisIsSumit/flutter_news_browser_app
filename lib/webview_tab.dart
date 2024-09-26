@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/Db/HiveDBHelper.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/util.dart';
@@ -31,29 +32,75 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
   bool _isWindowClosed = false;
 
   final TextEditingController _httpAuthUsernameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _httpAuthPasswordController =
-      TextEditingController();
+  TextEditingController();
+
+  removeAds() async {
+    await _webViewController!.evaluateJavascript(source: '''
+    const elements = document.getElementsByClassName(className);
+    for (let i = elements.length - 1; i >= 0; i--) {
+      elements[i].remove();
+    }
+    ''');
+
+    print("Ads Removed Successfully");
+  }
+
+  removeClassesUsingRules(){
+    List classNamesToRemove = HiveDBHelper.getAllClassRules();
+    _webViewController!.evaluateJavascript(source:'''
+            const classNamesToRemove = ${classNamesToRemove.map((className) => '"$className"').toList()};
+
+            classNamesToRemove.forEach(className => {
+              const elements = document.querySelectorAll(".className");
+              elements.forEach(element => element.remove());
+            });
+          ''');
+  }
+
+  removeIdsUsingRules(){
+    List idNamesToRemove = HiveDBHelper.getALlIdRules();
+    _webViewController!.evaluateJavascript(source:'''
+            const idNamesToRemove = ${idNamesToRemove.map((idName) => '"$idName"').toList()};
+
+            classNamesToRemove.forEach(idName => {
+              const element = document.getElementById(id);
+              element.remove();
+            });
+          ''');
+  }
+
+  removeHeaderAndFooter() async{
+    _webViewController!.evaluateJavascript(source: '''
+    
+  document.querySelector('header').remove();
+  document.querySelector('footer').remove();
+  document.getElementById("containerMain").style.marginTop = "0";
+  
+  
+    ''');
+    print("Header and Footers Removed Successfully");
+  }
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-
     _pullToRefreshController = kIsWeb
         ? null
         : PullToRefreshController(
-            settings: PullToRefreshSettings(color: Colors.blue),
-            onRefresh: () async {
-              if (defaultTargetPlatform == TargetPlatform.android) {
-                _webViewController?.reload();
-              } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-                _webViewController?.loadUrl(
-                    urlRequest:
-                        URLRequest(url: await _webViewController?.getUrl()));
-              }
-            },
-          );
+      settings: PullToRefreshSettings(color: Colors.blue),
+      onRefresh: () async {
+        if (defaultTargetPlatform == TargetPlatform.android) {
+          _webViewController?.reload();
+        } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+          _webViewController?.loadUrl(
+              urlRequest:
+              URLRequest(url: await _webViewController?.getUrl()));
+        }
+      },
+    );
 
     _findInteractionController = FindInteractionController();
   }
@@ -143,16 +190,16 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
     initialSettings.useShouldOverrideUrlLoading = true;
     initialSettings.javaScriptCanOpenWindowsAutomatically = true;
     initialSettings.userAgent =
-        "Mozilla/5.0 (Linux; Android 9; LG-H870 Build/PKQ1.190522.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36";
+    "Mozilla/5.0 (Linux; Android 9; LG-H870 Build/PKQ1.190522.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36";
     initialSettings.transparentBackground = true;
 
     initialSettings.safeBrowsingEnabled = true;
     initialSettings.disableDefaultErrorPage = true;
     initialSettings.supportMultipleWindows = true;
     initialSettings.verticalScrollbarThumbColor =
-        const Color.fromRGBO(0, 0, 0, 0.5);
+    const Color.fromRGBO(0, 0, 0, 0.5);
     initialSettings.horizontalScrollbarThumbColor =
-        const Color.fromRGBO(0, 0, 0, 0.5);
+    const Color.fromRGBO(0, 0, 0, 0.5);
 
     initialSettings.allowsLinkPreview = false;
     initialSettings.isFraudulentWebsiteWarningEnabled = true;
@@ -171,6 +218,7 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         await controller.setSettings(settings: initialSettings);
 
         _webViewController = controller;
+        await removeHeaderAndFooter();
         widget.webViewModel.webViewController = controller;
         widget.webViewModel.pullToRefreshController = _pullToRefreshController;
         widget.webViewModel.findInteractionController =
@@ -224,9 +272,9 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
               widget.webViewModel.favicon = fav;
             } else {
               if ((widget.webViewModel.favicon!.width == null &&
-                      !widget.webViewModel.favicon!.url
-                          .toString()
-                          .endsWith("favicon.ico")) ||
+                  !widget.webViewModel.favicon!.url
+                      .toString()
+                      .endsWith("favicon.ico")) ||
                   (fav.width != null &&
                       widget.webViewModel.favicon!.width != null &&
                       fav.width! > widget.webViewModel.favicon!.width!)) {
@@ -242,12 +290,12 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
 
           var screenshotData = _webViewController
               ?.takeScreenshot(
-                  screenshotConfiguration: ScreenshotConfiguration(
-                      compressFormat: CompressFormat.JPEG, quality: 20))
+              screenshotConfiguration: ScreenshotConfiguration(
+                  compressFormat: CompressFormat.JPEG, quality: 20))
               .timeout(
-                const Duration(milliseconds: 1500),
-                onTimeout: () => null,
-              );
+            const Duration(milliseconds: 1500),
+            onTimeout: () => null,
+          );
           widget.webViewModel.screenshot = await screenshotData;
         }
       },
@@ -274,7 +322,7 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         if (LongPressAlertDialog.hitTestResultSupported
             .contains(hitTestResult.type)) {
           var requestFocusNodeHrefResult =
-              await _webViewController?.requestFocusNodeHref();
+          await _webViewController?.requestFocusNodeHref();
 
           if (requestFocusNodeHrefResult != null) {
             showDialog(
