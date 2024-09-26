@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const LanguageSelectionScreen(),
+                                      const LanguageSelectionScreen(fromWelcomeScreen: false,),
                                 ),
                               );
                             } else if (result == 'category') {
@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const CategoriesSelectionScreen(),
+                                      const CategoriesSelectionScreen(fromWelcomeScreen: false,),
                                 ),
                               );
                             }

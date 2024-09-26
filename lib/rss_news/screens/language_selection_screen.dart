@@ -5,8 +5,9 @@ import 'package:hive_flutter/adapters.dart';
 import '../constants/constants.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
+ final bool fromWelcomeScreen;
   const LanguageSelectionScreen({
-    Key? key,
+    Key? key, required this.fromWelcomeScreen,
   });
 
   @override
@@ -34,12 +35,23 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       await box.put('selectedLanguages',
           selectedLanguages.map((e) => e.toString()).toList());
       // debugPrint(selectedLanguages.toString());
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CategoriesSelectionScreen(),
-        ),
-      );
+      if(widget.fromWelcomeScreen){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Great! please Swipe right to select categories.'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.lightBlue,
+          ),
+        );
+      }else{
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CategoriesSelectionScreen(fromWelcomeScreen: false,),
+          ),
+        );
+      }
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -124,7 +136,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Continue'),
+              child: const Text('Save'),
             ),
           ],
         ),

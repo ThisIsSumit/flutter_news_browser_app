@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/screens/home_screen.dart';
-import 'package:flutter_browser/rss_news/screens/language_selection_screen.dart';
+import 'package:flutter_browser/rss_news/screens/app_language_selection_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class EmptyTab extends StatefulWidget {
@@ -27,7 +27,7 @@ class _EmptyTabState extends State<EmptyTab> {
                 if (sources != null && sources.isNotEmpty)
                   const Expanded(child: HomeScreen())
                 else
-                  const Expanded(child: LanguageSelectionScreen())
+                  Expanded(child: AppLanguageSelectionScreen())
               ],
             );
           },
