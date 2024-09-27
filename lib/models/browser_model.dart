@@ -22,19 +22,23 @@ class BrowserSettings {
   bool homePageEnabled;
   String customUrlHomePage;
   bool debuggingEnabled;
+  String geminiApiKey;
 
-  BrowserSettings(
-      {this.searchEngine = GoogleSearchEngine,
-      this.homePageEnabled = false,
-      this.customUrlHomePage = "",
-      this.debuggingEnabled = false});
+  BrowserSettings({
+    this.searchEngine = GoogleSearchEngine,
+    this.homePageEnabled = false,
+    this.customUrlHomePage = "",
+    this.debuggingEnabled = false,
+    this.geminiApiKey = "",
+  });
 
   BrowserSettings copy() {
     return BrowserSettings(
         searchEngine: searchEngine,
         homePageEnabled: homePageEnabled,
         customUrlHomePage: customUrlHomePage,
-        debuggingEnabled: debuggingEnabled);
+        debuggingEnabled: debuggingEnabled,
+        geminiApiKey: geminiApiKey);
   }
 
   static BrowserSettings? fromMap(Map<String, dynamic>? map) {
@@ -43,7 +47,9 @@ class BrowserSettings {
             searchEngine: SearchEngines[map["searchEngineIndex"]],
             homePageEnabled: map["homePageEnabled"],
             customUrlHomePage: map["customUrlHomePage"],
-            debuggingEnabled: map["debuggingEnabled"])
+            debuggingEnabled: map["debuggingEnabled"],
+            geminiApiKey: map["geminiApiKey"],
+          )
         : null;
   }
 
@@ -52,7 +58,8 @@ class BrowserSettings {
       "searchEngineIndex": SearchEngines.indexOf(searchEngine),
       "homePageEnabled": homePageEnabled,
       "customUrlHomePage": customUrlHomePage,
-      "debuggingEnabled": debuggingEnabled
+      "debuggingEnabled": debuggingEnabled,
+      "geminiApiKey": geminiApiKey
     };
   }
 

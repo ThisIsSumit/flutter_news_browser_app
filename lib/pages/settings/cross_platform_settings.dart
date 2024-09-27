@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/search_engine_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/util.dart';
+import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -73,6 +75,44 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
             );
           }).toList(),
         ),
+      ),
+      ListTile(
+        title: const Text("Click to add Gemini API key"),
+        subtitle: RichText(
+          text: TextSpan(
+            text:
+                'If you don\'t already have one, create a key in Google AI Studio: ',
+            style: DefaultTextStyle.of(context).style, // default styling
+            children: [
+              TextSpan(
+                text: 'https://makersuite.google.com/app/apikey',
+                style: const TextStyle(
+                  color: Colors.blue, // Highlight as link
+                  decoration: TextDecoration.underline, // Underline like a link
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    var url = 'https://makersuite.google.com/app/apikey';
+                    // Use your app's browser model to navigate
+                    browserModel.addTab(WebViewTab(
+                        key: GlobalKey(),
+                        webViewModel: WebViewModel(url: WebUri(url))));
+                    Navigator.pop(context);
+                  },
+              ),
+            ],
+          ),
+        ),
+        onTap: () async {
+          var newApiKey =
+              await _showApiKeyInputDialog(context, settings.geminiApiKey);
+          if (newApiKey != null) {
+            setState(() {
+              settings.geminiApiKey = newApiKey;
+              browserModel.updateSettings(settings);
+            });
+          }
+        },
       ),
       FutureBuilder(
         future: InAppWebViewController.getDefaultUserAgent(),
@@ -448,5 +488,36 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
     ];
 
     return widgets;
+  }
+
+  Future<String?> _showApiKeyInputDialog(
+      BuildContext context, String currentApiKey) async {
+    var apiKeyController = TextEditingController(text: currentApiKey);
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Gemini API key"),
+          content: TextField(
+            controller: apiKeyController,
+            decoration: const InputDecoration(hintText: "Enter API key"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(apiKeyController.text);
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

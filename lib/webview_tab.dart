@@ -34,7 +34,6 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
       TextEditingController();
   final TextEditingController _httpAuthPasswordController =
       TextEditingController();
-
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);

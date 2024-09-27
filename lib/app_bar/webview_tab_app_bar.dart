@@ -13,10 +13,12 @@ import 'package:flutter_browser/models/web_archive_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/pages/developers/main.dart';
 import 'package:flutter_browser/pages/settings/main.dart';
+import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/tab_popup_menu_actions.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_extend/share_extend.dart';
@@ -48,7 +50,10 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
   Duration customPopupDialogTransitionDuration =
       const Duration(milliseconds: 300);
   CustomPopupDialogPageRoute? route;
-
+  SummarizeArticle summarizeArticle = SummarizeArticle();
+  String summary = "";
+  String _url = "";
+  bool _hasSummarized = false;
   OutlineInputBorder outlineBorder = const OutlineInputBorder(
     borderSide: BorderSide(color: Colors.transparent, width: 0.0),
     borderRadius: BorderRadius.all(
@@ -664,6 +669,20 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
                         )
                       ]),
                 );
+              case PopupMenuActions.FETCH_GEMINI_AI_HIGHLIGHTS:
+                return CustomPopupMenuItem<String>(
+                  enabled: browserModel.getSettings().geminiApiKey.isNotEmpty,
+                  value: choice,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(choice),
+                        const Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        )
+                      ]),
+                );
               case PopupMenuActions.INAPPWEBVIEW_PROJECT:
                 return CustomPopupMenuItem<String>(
                   enabled: true,
@@ -696,7 +715,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
   void _popupMenuChoiceAction(String choice) async {
     var currentWebViewModel = Provider.of<WebViewModel>(context, listen: false);
-
     switch (choice) {
       case PopupMenuActions.NEW_TAB:
         addNewTab();
@@ -714,13 +732,20 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         showWebArchives();
         break;
       case PopupMenuActions.FIND_ON_PAGE:
-        var isFindInteractionEnabled = currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
-        var findInteractionController = currentWebViewModel.findInteractionController;
-        if (Util.isIOS() && isFindInteractionEnabled && findInteractionController != null) {
+        var isFindInteractionEnabled =
+            currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
+        var findInteractionController =
+            currentWebViewModel.findInteractionController;
+        if (Util.isIOS() &&
+            isFindInteractionEnabled &&
+            findInteractionController != null) {
           await findInteractionController.presentFindNavigator();
         } else if (widget.showFindOnPage != null) {
           widget.showFindOnPage!();
         }
+        break;
+      case PopupMenuActions.FETCH_GEMINI_AI_HIGHLIGHTS:
+        fetchAiHighlights(currentWebViewModel.url.toString(), context);
         break;
       case PopupMenuActions.SHARE:
         share();
@@ -997,7 +1022,8 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
       var currentSettings = await webViewController.getSettings();
       if (currentSettings != null) {
-        currentSettings.preferredContentMode = webViewModel?.isDesktopMode ?? false
+        currentSettings.preferredContentMode =
+            webViewModel?.isDesktopMode ?? false
                 ? UserPreferredContentMode.DESKTOP
                 : UserPreferredContentMode.RECOMMENDED;
         await webViewController.setSettings(settings: currentSettings);
@@ -1077,6 +1103,59 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       );
 
       file.delete();
+    }
+  }
+
+  Future<List<String>> summarize(String url) async {
+    try {
+      _hasSummarized = true;
+      String summary = await summarizeArticle.summarizeArticle(context, url);
+
+      final box = Hive.box<List<String>>('preferences');
+      await box.put(
+          'summary', summary.split(',').map((s) => s.trim()).toList());
+
+      debugPrint("Summary: $summary");
+      return summary.split(',').map((s) => s.trim()).toList();
+    } catch (e) {
+      // Handle the exception
+      debugPrint("Error occurred while summarizing: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Failed to summarize the article. Please try again."),
+          ),
+        );
+      }
+      // Return an empty list or a default value
+      return []; // Return an empty list if summarization fails
+    }
+  }
+
+  Future<String> loadLocalJs() async {
+    return await rootBundle.loadString('assets/js/custom.js');
+  }
+
+  Future<void> fetchAiHighlights(String url, BuildContext context) async {
+    var browserModel = Provider.of<BrowserModel>(context, listen: false);
+    var webViewModel = browserModel.getCurrentTab()?.webViewModel;
+    var webViewController = webViewModel?.webViewController;
+    debugPrint("hellllllllllllp");
+    {
+      List<String> listSummary = await summarize(
+        url,
+      );
+      debugPrint("helll$listSummary");
+      String jsCode = await loadLocalJs();
+      // Inject the list of strings to highlight into the JavaScript code
+      String finalJsCode = """
+      window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
+      $jsCode
+    """;
+
+      webViewController!.evaluateJavascript(source: finalJsCode);
+
+      //  await webViewTabStateKey.currentState?.injectJavaScript(finalJsCode);
     }
   }
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 // import 'package:flutter_browser/src/constants/constants.dart';
@@ -27,7 +29,7 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
   List<FeedItem> _feedItems = [];
   bool _isLoading = true;
   String _error = '';
-
+  String summary = "";
   @override
   void initState() {
     super.initState();
@@ -35,16 +37,14 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
     _fetchFeeds();
   }
 
+
   void addNewTab({WebUri? url}) {
-    // return const EmptyTab();
     var browserModel = Provider.of<BrowserModel>(context, listen: false);
-    // browserModel.webViewTabs.clear();
     var settings = browserModel.getSettings();
-    // debugPrint("hellllllllllllllllllll");
     url ??= settings.homePageEnabled && settings.customUrlHomePage.isNotEmpty
         ? WebUri(settings.customUrlHomePage)
         : WebUri(settings.searchEngine.url);
-
+    
     browserModel.addTab(
         WebViewTab(key: GlobalKey(), webViewModel: WebViewModel(url: url)));
   }

@@ -11,7 +11,7 @@ class NewsWebView extends StatefulWidget {
     Key? key,
     required this.url,
   });
-
+  
   @override
   State<NewsWebView> createState() => _NewsWebViewState();
 }
@@ -25,7 +25,7 @@ class _NewsWebViewState extends State<NewsWebView> {
   Future<List<String>> summarize() async {
     try {
       _hasSummarized = true;
-      summary = await summarizeArticle.summarizeArticle(widget.url);
+      summary = await summarizeArticle.summarizeArticle(context, widget.url);
       final box = Hive.box<List<String>>('preferences');
       await box.put(
           'summary', summary.split(',').map((s) => s.trim()).toList());
@@ -44,17 +44,6 @@ class _NewsWebViewState extends State<NewsWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'News Article',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
-      ),
       body: WebView(
         initialUrl: widget.url,
         javascriptMode: JavascriptMode.unrestricted,
@@ -71,10 +60,11 @@ class _NewsWebViewState extends State<NewsWebView> {
                 $jsCode
               """;
             _controller.runJavascript(finalJsCode);
-            // Set the flag to true after summarizing
           }
         },
       ),
     );
   }
+
+  
 }
