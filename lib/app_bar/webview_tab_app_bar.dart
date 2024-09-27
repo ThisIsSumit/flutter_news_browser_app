@@ -52,8 +52,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
   CustomPopupDialogPageRoute? route;
   SummarizeArticle summarizeArticle = SummarizeArticle();
   String summary = "";
-  String _url = "";
-  bool _hasSummarized = false;
   OutlineInputBorder outlineBorder = const OutlineInputBorder(
     borderSide: BorderSide(color: Colors.transparent, width: 0.0),
     borderRadius: BorderRadius.all(
@@ -732,13 +730,9 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         showWebArchives();
         break;
       case PopupMenuActions.FIND_ON_PAGE:
-        var isFindInteractionEnabled =
-            currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
-        var findInteractionController =
-            currentWebViewModel.findInteractionController;
-        if (Util.isIOS() &&
-            isFindInteractionEnabled &&
-            findInteractionController != null) {
+        var isFindInteractionEnabled = currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
+        var findInteractionController = currentWebViewModel.findInteractionController;
+        if (Util.isIOS() && isFindInteractionEnabled && findInteractionController != null) {
           await findInteractionController.presentFindNavigator();
         } else if (widget.showFindOnPage != null) {
           widget.showFindOnPage!();
@@ -1108,7 +1102,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
   Future<List<String>> summarize(String url) async {
     try {
-      _hasSummarized = true;
       String summary = await summarizeArticle.summarizeArticle(context, url);
 
       final box = Hive.box<List<String>>('preferences');
