@@ -12,6 +12,7 @@ import 'package:flutter_browser/models/favorite_model.dart';
 import 'package:flutter_browser/models/web_archive_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/pages/developers/main.dart';
+import 'package:flutter_browser/pages/settings/adRemoverSettings.dart';
 import 'package:flutter_browser/pages/settings/main.dart';
 import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/tab_popup_menu_actions.dart';

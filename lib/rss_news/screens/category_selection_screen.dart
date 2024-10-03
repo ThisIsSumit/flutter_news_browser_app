@@ -5,7 +5,8 @@ import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/rss_news/screens/sources_selection_screen.dart';
 
 class CategoriesSelectionScreen extends StatefulWidget {
-  const CategoriesSelectionScreen({Key? key});
+  final bool fromWelcomeScreen;
+  const CategoriesSelectionScreen({Key? key, required this.fromWelcomeScreen});
 
   @override
   State<CategoriesSelectionScreen> createState() =>
@@ -65,13 +66,23 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
     if (_selectedCategories.length > 1) {
       final box = Hive.box<List<String>>('preferences');
       box.put('selectedCategories', _selectedCategories);
-      // debugPrint(_selectedCategories.toString());
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SourcesSelectionScreen(),
-        ),
-      );
+      // // debugPrint(_selectedCategories.toString());
+      if(widget.fromWelcomeScreen){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Great! Please Swipe right to select sources.'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.lightBlue,
+          ),
+        );
+      }else{
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SourcesSelectionScreen(),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -143,7 +154,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Continue'),
+              child: const Text('Save'),
             ),
           ],
         ),

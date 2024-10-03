@@ -1,6 +1,7 @@
 import 'package:ferry/ferry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/Db/HiveDBHelper.dart';
 import 'package:flutter_browser/rss_news/client/client.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,6 +35,9 @@ const apiUrl = "https://dev-api-news-rss-sr235aqw.pragament.com/graphql";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // ignore: unused_local_variable
+
+  await HiveDBHelper.initializeHive();
+
   final Client client = await initClient();
   WEB_ARCHIVE_DIR = (await getApplicationSupportDirectory()).path;
 
