@@ -34,6 +34,7 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
   final TextEditingController _httpAuthUsernameController =
   TextEditingController();
   final TextEditingController _httpAuthPasswordController =
+
   TextEditingController();
 
   removeAds() async {
