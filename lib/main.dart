@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/Db/HiveDBHelper.dart';
 import 'package:flutter_browser/rss_news/client/client.dart';
+import 'package:flutter_browser/rss_news/services/summary_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -38,7 +39,7 @@ void main() async {
 
   await HiveDBHelper.initializeHive();
 
-  final Client client = await initClient();
+  final Client client = await initClient(); // don't remove this line
   WEB_ARCHIVE_DIR = (await getApplicationSupportDirectory()).path;
 
   TAB_VIEWER_BOTTOM_OFFSET_1 = 130.0;
@@ -62,8 +63,9 @@ void main() async {
             browserModel!.setCurrentWebViewModel(webViewModel);
             return browserModel;
           },
-          create: (BuildContext context) => BrowserModel(),
+          create: (BuildContext context) => BrowserModel(),      
         ),
+         ChangeNotifierProvider(create: (context) => BackgroundTask()),
       ],
       child: const FlutterBrowserApp(),
     ),

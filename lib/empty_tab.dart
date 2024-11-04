@@ -14,7 +14,6 @@ class _EmptyTabState extends State<EmptyTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: const BrowserAppBar(),
       body: Padding(
         padding: const EdgeInsets.only(top: 300.0),
         child: ValueListenableBuilder(

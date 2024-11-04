@@ -22,7 +22,7 @@ class TabViewerAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TabViewerAppBarState extends State<TabViewerAppBar> {
-  GlobalKey tabInkWellKey = GlobalKey();
+  GlobalKey tabInkWellKey1 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class _TabViewerAppBarState extends State<TabViewerAppBar> {
 
     return <Widget>[
       InkWell(
-        key: tabInkWellKey,
+        key: tabInkWellKey1,
         onTap: () {
           if (browserModel.webViewTabs.isNotEmpty) {
             browserModel.showTabScroller = !browserModel.showTabScroller;
