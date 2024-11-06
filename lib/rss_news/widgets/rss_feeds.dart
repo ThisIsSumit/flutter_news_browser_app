@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
@@ -9,14 +10,13 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 // import 'package:flutter_browser/src/constants/constants.dart';
 import 'package:xml/xml.dart' as xml;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../models/feed_item.dart';
-// import '../screens/web_view_sceen.dart';
-// import '../../app_bar/webview_tab_app_bar.dart';
 
 class RSSFeedScreen extends StatefulWidget {
   final List<String> feedUrls;
@@ -35,13 +35,13 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
     super.initState();
     // debugPrint('rss${widget.feedUrls.toString()})');
     _fetchFeeds();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<BackgroundTask>(context, listen: false)
-          .getHighlights(context, widget.feedUrls);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Provider.of<BackgroundTask>(context, listen: false)
+    //       .getHighlights(context, widget.feedUrls);
+    // });
   }
-
-  void addNewTab({WebUri? url}) {
+  
+  void addNewTab({WebUri? url}) async {
     var browserModel = Provider.of<BrowserModel>(context, listen: false);
     var settings = browserModel.getSettings();
     url ??= settings.homePageEnabled && settings.customUrlHomePage.isNotEmpty
@@ -50,6 +50,7 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
 
     browserModel.addTab(
         WebViewTab(key: GlobalKey(), webViewModel: WebViewModel(url: url)));
+    executeJS(browserModel);
   }
 
   DateTime _sortDateTime(String pubDate) {
@@ -228,5 +229,38 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
         ),
       ],
     );
+  }
+
+  Future<String> loadLocalJs() async {
+    return await rootBundle.loadString('assets/js/remove_adds.js');
+  }
+  
+  void executeJS(BrowserModel browserModel) async {
+    try {
+      final currentTab = browserModel.getCurrentTab();
+      if (currentTab == null) {
+        debugPrint("No current tab available");
+        return;
+      }
+
+      final webViewModel = currentTab.webViewModel;
+
+      await Future.delayed(const Duration(seconds: 1));
+      final webViewController = webViewModel.webViewController;
+
+      if (webViewController == null) {
+        debugPrint("WebViewController is null");
+        return;
+      }
+      try {
+        String jsCode = await loadLocalJs();
+        await webViewController.evaluateJavascript(source: jsCode);
+      } catch (jsError) {
+        debugPrint("JavaScript execution error: $jsError");
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Error in addNewTab: $e");
+      debugPrint("Stack trace: $stackTrace");
+    }
   }
 }

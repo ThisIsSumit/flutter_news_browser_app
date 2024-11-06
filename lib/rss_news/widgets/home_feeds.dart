@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
+import 'package:flutter_browser/rss_news/models/feed_model.dart';
 import 'package:flutter_browser/rss_news/widgets/rss_feeds.dart';
 
 import '../constants/constants.dart';
 
 class HomeFeeds extends StatefulWidget {
-  final Future<List<GGetFeedsData_getFeeds>> customLanguageFeeds;
+  // final Future<List<GGetFeedsData_getFeeds>> customLanguageFeeds;
+  final Future<List<Feed>> customLanguageFeeds;
+
   const HomeFeeds({Key? key, required this.customLanguageFeeds});
 
   @override

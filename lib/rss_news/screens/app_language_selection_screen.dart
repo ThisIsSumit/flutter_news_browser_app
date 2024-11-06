@@ -3,11 +3,12 @@ import 'package:flutter_browser/rss_news/screens/welcome_screen.dart';
 
 class AppLanguageSelectionScreen extends StatefulWidget {
   @override
-  _AppLanguageSelectionScreenState createState() => _AppLanguageSelectionScreenState();
+  _AppLanguageSelectionScreenState createState() =>
+      _AppLanguageSelectionScreenState();
 }
 
-class _AppLanguageSelectionScreenState extends State<AppLanguageSelectionScreen> {
-
+class _AppLanguageSelectionScreenState
+    extends State<AppLanguageSelectionScreen> {
   final List<Map<String, String>> languages = [
     {'name': 'English', 'code': 'en'},
     {'name': 'Hindi', 'code': 'hi'},
@@ -35,11 +36,13 @@ class _AppLanguageSelectionScreenState extends State<AppLanguageSelectionScreen>
                 itemBuilder: (context, index) {
                   return RadioListTile<String>(
                     title: Text(languages[index]['name']!),
-                    value: languages[index]['code']!, // Set the value to the language code
+                    value: languages[index]
+                        ['code']!, // Set the value to the language code
                     groupValue: selectedLanguageCode, // Current selected value
                     onChanged: (String? value) {
                       setState(() {
-                        selectedLanguageCode = value; // Update the selected language
+                        selectedLanguageCode =
+                            value; // Update the selected language
                       });
                     },
                   );
@@ -51,7 +54,11 @@ class _AppLanguageSelectionScreenState extends State<AppLanguageSelectionScreen>
               onPressed: selectedLanguageCode != null
                   ? () => _onLanguageSelected(context)
                   : null, // Disable the button if no language is selected
-              child: const Text('Continue',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+              child: const Text(
+                'Continue',
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
@@ -65,7 +72,9 @@ class _AppLanguageSelectionScreenState extends State<AppLanguageSelectionScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => WelcomeScreen(selectedLanguage: selectedLanguageCode!), // Pass the selected language code
+          builder: (context) => WelcomeScreen(
+              selectedLanguage:
+                  selectedLanguageCode!), // Pass the selected language code
         ),
       );
     }

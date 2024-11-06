@@ -45,14 +45,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     with SingleTickerProviderStateMixin {
   TextEditingController? _searchController = TextEditingController();
   FocusNode? _focusNode;
- 
 
   GlobalKey tabInkWellKey = GlobalKey();
 
   Duration customPopupDialogTransitionDuration =
       const Duration(milliseconds: 300);
   CustomPopupDialogPageRoute? route;
- SummarizeArticle summarizeArticle = SummarizeArticle();
+  SummarizeArticle summarizeArticle = SummarizeArticle();
   String summary = "";
   OutlineInputBorder outlineBorder = const OutlineInputBorder(
     borderSide: BorderSide(color: Colors.transparent, width: 0.0),
@@ -732,9 +731,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         showWebArchives();
         break;
       case PopupMenuActions.FIND_ON_PAGE:
-        var isFindInteractionEnabled = currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
-        var findInteractionController = currentWebViewModel.findInteractionController;
-        if (Util.isIOS() && isFindInteractionEnabled && findInteractionController != null) {
+        var isFindInteractionEnabled =
+            currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
+        var findInteractionController =
+            currentWebViewModel.findInteractionController;
+        if (Util.isIOS() &&
+            isFindInteractionEnabled &&
+            findInteractionController != null) {
           await findInteractionController.presentFindNavigator();
         } else if (widget.showFindOnPage != null) {
           widget.showFindOnPage!();
@@ -1141,16 +1144,15 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       debugPrint('articlelink $url');
       List<String>? listSummary = box.get(url);
       listSummary ??= await summarizeIfNotAlready(url);
-      String jsCode = await loadLocalJs();
-      // Inject the list of strings to highlight into the JavaScript code
-      String finalJsCode = """
-      window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
-      $jsCode
-    """;
-
-      webViewController!.evaluateJavascript(source: finalJsCode);
-
-      //  await webViewTabStateKey.currentState?.injectJavaScript(finalJsCode);
+        String jsCode = await loadLocalJs();
+        // Inject the list of strings to highlight into the JavaScript code
+        String finalJsCode = """
+        window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
+        $jsCode
+      """;
+      // String newJS = await load();
+      final result = await webViewController!.evaluateJavascript(source: finalJsCode);
+      debugPrint("rrrrrrrrrrrr" + result.toString());
     }
   }
 }

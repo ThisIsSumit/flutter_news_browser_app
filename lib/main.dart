@@ -6,9 +6,7 @@ import 'package:flutter_browser/rss_news/client/client.dart';
 import 'package:flutter_browser/rss_news/services/summary_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'browser.dart';
@@ -31,7 +29,7 @@ const double TAB_VIEWER_TOP_OFFSET_3 = 20.0;
 const double TAB_VIEWER_TOP_SCALE_TOP_OFFSET = 250.0;
 // ignore: constant_identifier_names
 const double TAB_VIEWER_TOP_SCALE_BOTTOM_OFFSET = 230.0;
-const apiUrl = "https://dev-api-news-rss-sr235aqw.pragament.com/graphql";
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,9 +46,9 @@ void main() async {
 
   await FlutterDownloader.initialize(debug: kDebugMode);
 
-  await Permission.camera.request();
-  await Permission.microphone.request();
-  await Permission.storage.request();
+  // await Permission.camera.request();
+  // await Permission.microphone.request();
+  // await Permission.storage.request();
 
   runApp(
     MultiProvider(
@@ -63,9 +61,9 @@ void main() async {
             browserModel!.setCurrentWebViewModel(webViewModel);
             return browserModel;
           },
-          create: (BuildContext context) => BrowserModel(),      
+          create: (BuildContext context) => BrowserModel(),
         ),
-         ChangeNotifierProvider(create: (context) => BackgroundTask()),
+        ChangeNotifierProvider(create: (context) => BackgroundTask()),
       ],
       child: const FlutterBrowserApp(),
     ),

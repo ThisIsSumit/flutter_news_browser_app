@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
+import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/rss_news/screens/sources_selection_screen.dart';
@@ -19,7 +20,8 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   final List<String> _selectedCategories = ["Home Feeds"];
   late String selectedLanguage;
   final TextEditingController _searchController = TextEditingController();
-  final FetchFeeds _fetchFeeds = FetchFeeds();
+  // final FetchFeeds _fetchFeeds = FetchFeeds();
+  final FetchStaticFeeds _fetchStaticFeeds = FetchStaticFeeds();
   bool _isLoading = false;
 
   @override
@@ -36,7 +38,9 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
     final language = box.get('selectedLanguages');
     debugPrint('lan${language.toString()}');
     if (language != null) {
-      final feeds = await _fetchFeeds.feedsBySelectedLanguage(language);
+      // final feeds = await _fetchFeeds.feedsBySelectedLanguage(language);
+      final feeds = await _fetchStaticFeeds.feedsBySelectedLanguage(language);
+
       final List<String> categories =
           feeds.map((feed) => feed.category).toSet().toList();
 
@@ -67,7 +71,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
       final box = Hive.box<List<String>>('preferences');
       box.put('selectedCategories', _selectedCategories);
       // // debugPrint(_selectedCategories.toString());
-      if(widget.fromWelcomeScreen){
+      if (widget.fromWelcomeScreen) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Great! Please Swipe right to select sources.'),
@@ -75,7 +79,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
             backgroundColor: Colors.lightBlue,
           ),
         );
-      }else{
+      } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

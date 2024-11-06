@@ -1,7 +1,7 @@
 // feeds_service.dart
 import 'package:ferry/ferry.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:gql_http_link/gql_http_link.dart';
-import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.req.gql.dart';
 

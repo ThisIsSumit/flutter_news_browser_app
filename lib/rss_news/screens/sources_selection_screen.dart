@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
+import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
 
 class SourcesSelectionScreen extends StatefulWidget {
@@ -11,7 +12,8 @@ class SourcesSelectionScreen extends StatefulWidget {
 }
 
 class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
-  final FetchFeeds _fetchFeeds = FetchFeeds();
+  // final FetchFeeds _fetchFeeds = FetchFeeds();
+  final FetchStaticFeeds _fetchStaticFeeds = FetchStaticFeeds();
   String selectedCategory = "";
 
   List<String> allSources = [];
@@ -33,9 +35,11 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
     final languages = box.get('selectedLanguages');
     final categories = box.get('selectedCategories');
     if (languages != null && categories != null) {
-      final sourceFeeds =
-          await _fetchFeeds.feedsBySelectedCategories(languages, categories);
+      final sourceFeeds = await _fetchStaticFeeds.feedsBySelectedCategories(
+          languages, categories);
+      debugPrint(sourceFeeds[0].toString());
       final sources = sourceFeeds.map((feed) => feed.source).toSet().toList();
+      // debugPrint(sources.toString());
       setState(() {
         allSources = sources;
         selectedSources = box.get('selectedSources') ?? [];
