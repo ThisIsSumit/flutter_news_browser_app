@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:flutter_browser/rss_news/models/feed_model.dart';
 import 'package:flutter_browser/rss_news/widgets/rss_feeds.dart';
 
 import '../graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
 
 class CustomCategoryFeeds extends StatefulWidget {
-  final List<GGetFeedsByCategoryData_getFeeds> feedsByACategory;
+  // final List<GGetFeedsByCategoryData_getFeeds> feedsByACategory;
+  final List<Feed> feedsByACategory;
   const CustomCategoryFeeds({Key? key, required this.feedsByACategory});
 
   @override
@@ -21,7 +23,7 @@ class _CustomCategoryFeedsState extends State<CustomCategoryFeeds> {
       isLoading = true;
     });
     try {
-      final List<GGetFeedsByCategoryData_getFeeds> feeds =
+      final List<Feed> feeds =
           widget.feedsByACategory;
       setState(() {
         feedUrls =

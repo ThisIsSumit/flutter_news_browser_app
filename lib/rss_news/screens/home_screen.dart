@@ -3,7 +3,10 @@ import 'package:flutter_browser/rss_news/controller/feeds_by_category_controller
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/fetch_feeds.dart';
 import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/__generated__/get_feeds_by_category.data.gql.dart';
+import 'package:flutter_browser/rss_news/graphqlQueries/getFeedsByCategory/fetch_feeds_by_category.dart';
+import 'package:flutter_browser/rss_news/models/feed_model.dart';
 import 'package:flutter_browser/rss_news/screens/category_selection_screen.dart';
+import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:flutter_browser/rss_news/widgets/home_feeds.dart';
 import 'package:flutter_browser/rss_news/widgets/nav_bar.dart';
 import 'package:hive/hive.dart';
@@ -20,12 +23,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late String selectedLanguage;
-  late Future<List<GGetFeedsData_getFeeds>> futureFeeds;
-  late Future<List<GGetFeedsData_getFeeds>> categoryFeeds;
-  final FetchFeeds _fetchFeeds = FetchFeeds();
+
+  // late Future<List<GGetFeedsData_getFeeds>> categoryFeeds;
+  late Future<List<Feed>> categoryFeeds;
+  // final FetchFeeds _fetchFeeds = FetchFeeds();
+  final FetchStaticFeeds _fetchStaticFeeds = FetchStaticFeeds();
   final FeedsByCategoryController _feedsByCategoryController =
       FeedsByCategoryController();
-  List<GGetFeedsByCategoryData_getFeeds> feedsByACategory = [];
+  // List<GGetFeedsByCategoryData_getFeeds> feedsByACategory = [];
+  List<Feed> feedsByACategory = [];
   String selectedCategory = "";
   late List<String> _categories = [];
   bool isLoading = true;
@@ -47,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final sources = box.get('selectedSources')!;
     if (language != null) {
       categoryFeeds =
-          _fetchFeeds.feedsBySelectedSource(language, _categories, sources);
+          _fetchStaticFeeds.feedsBySelectedSource(language, _categories, sources);
       debugPrint(categoryFeeds.toString());
       setState(() {
         isLoading = false;
@@ -65,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = true;
       });
       debugPrint(category);
-      final feeds = await _feedsByCategoryController.byACategory(category);
+      final feeds = await _feedsByCategoryController.byAStaticCategory(category);
       setState(() {
         feedsByACategory = feeds;
         selectedCategory = category;
@@ -81,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await _loadSelectedLanguage();
     if (selectedCategory.isNotEmpty) {
       feedsByACategory =
-          await _feedsByCategoryController.byACategory(selectedCategory);
+          await _feedsByCategoryController.byAStaticCategory(selectedCategory);
     }
     debugPrint('refreshing');
 
@@ -124,7 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const LanguageSelectionScreen(fromWelcomeScreen: false,),
+                                      const LanguageSelectionScreen(
+                                    fromWelcomeScreen: false,
+                                  ),
                                 ),
                               );
                             } else if (result == 'category') {
@@ -132,7 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const CategoriesSelectionScreen(fromWelcomeScreen: false,),
+                                      const CategoriesSelectionScreen(
+                                    fromWelcomeScreen: false,
+                                  ),
                                 ),
                               );
                             }

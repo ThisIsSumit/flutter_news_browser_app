@@ -731,9 +731,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         showWebArchives();
         break;
       case PopupMenuActions.FIND_ON_PAGE:
-        var isFindInteractionEnabled = currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
-        var findInteractionController = currentWebViewModel.findInteractionController;
-        if (Util.isIOS() && isFindInteractionEnabled && findInteractionController != null) {
+        var isFindInteractionEnabled =
+            currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
+        var findInteractionController =
+            currentWebViewModel.findInteractionController;
+        if (Util.isIOS() &&
+            isFindInteractionEnabled &&
+            findInteractionController != null) {
           await findInteractionController.presentFindNavigator();
         } else if (widget.showFindOnPage != null) {
           widget.showFindOnPage!();
@@ -1101,15 +1105,19 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     }
   }
 
-  Future<List<String>> summarize(String url) async {
+  Future<String> loadLocalJs() async {
+    return await rootBundle.loadString('assets/js/custom.js');
+  }
+
+  Future<List<String>> summarizeIfNotAlready(String url) async {
+    // debugPrint("not summerized already");
     try {
       String summary = await summarizeArticle.summarizeArticle(context, url);
 
       final box = Hive.box<List<String>>('preferences');
-      await box.put(
-          'summary', summary.split(',').map((s) => s.trim()).toList());
+      await box.put(url, summary.split(',').map((s) => s.trim()).toList());
 
-      debugPrint("Summary: $summary");
+      // debugPrint("not Summary: $summary");
       return summary.split(',').map((s) => s.trim()).toList();
     } catch (e) {
       // Handle the exception
@@ -1126,30 +1134,25 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     }
   }
 
-  Future<String> loadLocalJs() async {
-    return await rootBundle.loadString('assets/js/custom.js');
-  }
-
   Future<void> fetchAiHighlights(String url, BuildContext context) async {
     var browserModel = Provider.of<BrowserModel>(context, listen: false);
     var webViewModel = browserModel.getCurrentTab()?.webViewModel;
     var webViewController = webViewModel?.webViewController;
-    debugPrint("hellllllllllllp");
+
     {
-      List<String> listSummary = await summarize(
-        url,
-      );
-      debugPrint("helll$listSummary");
-      String jsCode = await loadLocalJs();
-      // Inject the list of strings to highlight into the JavaScript code
-      String finalJsCode = """
-      window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
-      $jsCode
-    """;
-
-      webViewController!.evaluateJavascript(source: finalJsCode);
-
-      //  await webViewTabStateKey.currentState?.injectJavaScript(finalJsCode);
+      final box = Hive.box<List<String>>('preferences');
+      debugPrint('articlelink $url');
+      List<String>? listSummary = box.get(url);
+      listSummary ??= await summarizeIfNotAlready(url);
+        String jsCode = await loadLocalJs();
+        // Inject the list of strings to highlight into the JavaScript code
+        String finalJsCode = """
+        window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
+        $jsCode
+      """;
+      // String newJS = await load();
+      final result = await webViewController!.evaluateJavascript(source: finalJsCode);
+      debugPrint("rrrrrrrrrrrr" + result.toString());
     }
   }
 }

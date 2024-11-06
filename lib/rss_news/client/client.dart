@@ -1,8 +1,9 @@
-  import 'package:gql_http_link/gql_http_link.dart';
+  import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:gql_http_link/gql_http_link.dart';
   import 'package:ferry/ferry.dart';
   import 'package:ferry_hive_store/ferry_hive_store.dart';
   import 'package:hive_flutter/adapters.dart';
-  import 'package:flutter_browser/main.dart';
+  
 
   Future<Client> initClient() async {
     try {

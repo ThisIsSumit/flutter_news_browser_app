@@ -28,7 +28,7 @@ class WebViewModel extends ChangeNotifier {
 
   WebViewModel(
       {int? tabIndex,
-        WebUri? url,
+      WebUri? url,
       String? title,
       Favicon? favicon,
       double progress = 0.0,
@@ -42,8 +42,8 @@ class WebViewModel extends ChangeNotifier {
       this.windowId,
       this.settings,
       this.webViewController,
-        this.pullToRefreshController,
-        this.findInteractionController,
+      this.pullToRefreshController,
+      this.findInteractionController,
       this.needsToCompleteInitialLoad = true}) {
     _tabIndex = tabIndex;
     _url = url;
