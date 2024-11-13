@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/rss_news/graphqlQueries/getFeeds/__generated__/get_feed.data.gql.dart';
 import 'package:flutter_browser/rss_news/models/feed_model.dart';
 import 'package:flutter_browser/rss_news/widgets/rss_feeds.dart';
 

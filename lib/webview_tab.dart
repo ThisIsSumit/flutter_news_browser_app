@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/Db/HiveDBHelper.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/models/webview_model.dart';
+import 'package:flutter_browser/rss_news/services/custom_rules.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'javascript_console_result.dart';
 import 'long_press_alert_dialog.dart';
 import 'models/browser_model.dart';
@@ -30,61 +29,11 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
   PullToRefreshController? _pullToRefreshController;
   FindInteractionController? _findInteractionController;
   bool _isWindowClosed = false;
-
+  CustomRules customRules = CustomRules();
   final TextEditingController _httpAuthUsernameController =
       TextEditingController();
   final TextEditingController _httpAuthPasswordController =
       TextEditingController();
-
-  // removeAds() async {
-  //   await _webViewController!.evaluateJavascript(source: '''
-  //   const elements = document.getElementsByClassName(className);
-  //   for (let i = elements.length - 1; i >= 0; i--) {
-  //     elements[i].remove();
-  //   }
-  //   ''');
-
-  //   print("Ads Removed Successfully");
-  // }
-
-  Future<void> removeClassesUsingRules() async {
-    // Load the JavaScript file
-    String jsCode = await rootBundle.loadString('assets/js/ads.js');
-
-    // Get class names from your HiveDBHelper
-    List classNamesToRemove = HiveDBHelper.getAllClassRules();
-    debugPrint(classNamesToRemove.toString());
-
-    // Execute the JavaScript in the WebView
-    await _webViewController!.evaluateJavascript(source: '''
-    $jsCode
-    removeClassesUsingRules(${classNamesToRemove.map((className) => '"$className"').toList()});
-  ''');
-  }
-
-  removeIdsUsingRules() {
-    List idNamesToRemove = HiveDBHelper.getALlIdRules();
-    _webViewController!.evaluateJavascript(source: '''
-            const idNamesToRemove = ${idNamesToRemove.map((idName) => '"$idName"').toList()};
-
-            classNamesToRemove.forEach(idName => {
-              const element = document.getElementById(id);
-              element.remove();
-            });
-          ''');
-  }
-
-  removeHeaderAndFooter() async {
-    await _webViewController!.evaluateJavascript(source: '''
-    
-  document.querySelector('header').remove();
-  document.querySelector('footer').remove();
-  document.getElementById("containerMain").style.marginTop = "0";
-  
-  
-    ''');
-    print("Header and Footers Removed Successfully");
-  }
 
   @override
   void initState() {
@@ -255,7 +204,31 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
       },
       onLoadStop: (controller, url) async {
         _pullToRefreshController?.endRefreshing();
-        await removeClassesUsingRules();
+        await customRules.removeElementsUsingRules(
+            _webViewController,
+            "AdBlock",
+            "Id",
+            browserModel.getSettings().adsDisabled,
+            widget.webViewModel.url);
+        await customRules.removeElementsUsingRules(
+            _webViewController,
+            "AdBlock",
+            "Class",
+            browserModel.getSettings().adsDisabled,
+            widget.webViewModel.url);
+        await customRules.removeElementsUsingRules(
+            _webViewController,
+            "Immersive Reader",
+            "Id",
+            browserModel.getSettings().immersiveReaderEnabled,
+            widget.webViewModel.url);
+        await customRules.removeElementsUsingRules(
+            _webViewController,
+            "Immersive Reader",
+            "Class",
+            browserModel.getSettings().immersiveReaderEnabled,
+            widget.webViewModel.url);
+        await customRules.removeHeaderAndFooter(_webViewController);
         widget.webViewModel.url = url;
         widget.webViewModel.favicon = null;
         widget.webViewModel.loaded = true;
@@ -332,6 +305,7 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
 
           if (requestFocusNodeHrefResult != null) {
             showDialog(
+              // ignore: use_build_context_synchronously
               context: context,
               builder: (context) {
                 return LongPressAlertDialog(

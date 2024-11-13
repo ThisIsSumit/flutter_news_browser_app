@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/search_engine_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/pages/settings/adRemoverSettings.dart';
+
+import 'package:flutter_browser/rss_news/widgets/rules_widget.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
-import '../../Db/HiveDBHelper.dart';
 import '../../project_info_popup.dart';
 
 class CrossPlatformSettings extends StatefulWidget {
@@ -35,57 +35,11 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
   }
 
   final TextEditingController textController = TextEditingController();
-  List listOfClassesRules = [];
-  List listOfIdRules = [];
 
   @override
   void initState() {
     super.initState();
-    setRules();
-  }
-
-  setRules(){
-    listOfClassesRules = HiveDBHelper.getAllClassRules();
-    listOfIdRules = HiveDBHelper.getALlIdRules();
-    setState(() {});
-  }
-
-  showAddingDialog(Size size,bool isClass){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-
-        actionsAlignment: MainAxisAlignment.spaceEvenly,
-        actions: [
-          Container(width: size.width*0.275,child: ElevatedButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("Discard"),style: ElevatedButton.styleFrom(backgroundColor: Colors.red,foregroundColor: Colors.white),),),
-          Container(width: size.width*0.275,child: ElevatedButton(onPressed: (){
-            if(textController.text.isNotEmpty) {
-              if(isClass) {
-                HiveDBHelper.addClassRule(textController.text);
-              }else{
-                HiveDBHelper.addElementIdRule(textController.text);
-              }
-              textController.clear();
-              setRules();
-              Navigator.pop(context);
-            }
-          }, child: Text("Add"),style: ElevatedButton.styleFrom(backgroundColor: Colors.green,foregroundColor: Colors.white),),),
-        ],
-        content: Container(
-          height: size.height*0.1,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(isClass? "Class Name" : "Id Name"),
-              TextField(
-                controller: textController,
-              ),
-            ],
-          ),
-        ),
-      );
-    });
+    ;
   }
 
   @override
@@ -169,6 +123,29 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
               browserModel.updateSettings(settings);
             });
           }
+        },
+      ),
+      const RulesWidget(),
+      SwitchListTile(
+        title: const Text("Block Ads"),
+        subtitle: const Text("Removes the Html elements present in Rules"),
+        value: settings.adsDisabled,
+        onChanged: (value) {
+          setState(() {
+            settings.adsDisabled = value;
+            browserModel.updateSettings(settings);
+          });
+        },
+      ),
+      SwitchListTile(
+        title: const Text("Immersive Reader"),
+        subtitle: const Text("Removes the Html elements present in Rules"),
+        value: settings.immersiveReaderEnabled,
+        onChanged: (value) {
+          setState(() {
+            settings.immersiveReaderEnabled = value;
+            browserModel.updateSettings(settings);
+          });
         },
       ),
       FutureBuilder(
@@ -262,123 +239,6 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
           );
         },
       ),
-
-
-
-      //Add Remover Settings
-      Row(
-        children: [
-          SizedBox(
-            width: 20,
-          ),
-          Text("Classes Rules",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 20),),
-          Spacer(),
-          IconButton(icon: Icon(Icons.add),onPressed: (){
-            showAddingDialog(size,true);
-          },),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      ),
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        child: listOfClassesRules.isNotEmpty ?
-        ListView.builder(itemCount: listOfClassesRules.length,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),itemBuilder: (context,index){
-          String classRule = listOfClassesRules[index];
-          return Card(
-            color: Colors.white,
-            elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(classRule),
-                  Spacer(),
-                  InkWell(onTap: (){
-                    HiveDBHelper.removeClassRule(index);
-                    setRules();
-                  },child: Icon(Icons.delete,color: Colors.red,),),
-                  SizedBox(
-                    width: 5,
-                  ),
-                ],
-              ),
-            ),
-          );
-        })
-            : Card(
-          color: Colors.white,
-          elevation: 5,
-          child: Container(
-            alignment: Alignment.center,
-            height: size.height*0.2,
-            child: Text("No Rules for Classes Set yet"),
-          ),
-        ),
-      ),
-
-      SizedBox(
-        height: 20,
-      ),
-      Row(
-        children: [
-          SizedBox(
-            width: 20,
-          ),
-          Text("Id Rules",style: TextStyle(fontWeight: FontWeight.w800,fontSize: 20),),
-          Spacer(),
-          IconButton(icon: Icon(Icons.add),onPressed: (){
-            showAddingDialog(size, false);
-          },),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      ),
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        child: listOfIdRules.isNotEmpty ?
-        ListView.builder(itemCount: listOfIdRules.length,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),itemBuilder: (context,index){
-          String idRule = listOfIdRules[index];
-          return Card(
-            color: Colors.white,
-            elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(idRule),
-                  Spacer(),
-                  InkWell(onTap: (){
-                    HiveDBHelper.removeIdRule(index);
-                    setRules();
-                  },child: Icon(Icons.delete,color: Colors.red,),),
-                  SizedBox(
-                    width: 5,
-                  ),
-                ],
-              ),
-            ),
-          );
-        })
-            : Card(
-          color: Colors.white,
-          elevation: 5,
-          child: Container(
-            alignment: Alignment.center,
-            height: size.height*0.2,
-            child: Text("No Rules for Classes Set yet"),
-          ),
-        ),
-      ),
-
     ];
 
     if (Util.isAndroid()) {

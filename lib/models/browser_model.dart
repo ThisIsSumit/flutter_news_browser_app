@@ -22,6 +22,8 @@ class BrowserSettings {
   bool homePageEnabled;
   String customUrlHomePage;
   bool debuggingEnabled;
+  bool adsDisabled;
+  bool immersiveReaderEnabled;
   String geminiApiKey;
 
   BrowserSettings({
@@ -29,6 +31,8 @@ class BrowserSettings {
     this.homePageEnabled = false,
     this.customUrlHomePage = "",
     this.debuggingEnabled = false,
+    this.adsDisabled = true,
+    this.immersiveReaderEnabled = false,
     this.geminiApiKey = "",
   });
 
@@ -38,6 +42,8 @@ class BrowserSettings {
         homePageEnabled: homePageEnabled,
         customUrlHomePage: customUrlHomePage,
         debuggingEnabled: debuggingEnabled,
+        adsDisabled: adsDisabled,
+        immersiveReaderEnabled: immersiveReaderEnabled,
         geminiApiKey: geminiApiKey);
   }
 
@@ -48,6 +54,8 @@ class BrowserSettings {
             homePageEnabled: map["homePageEnabled"],
             customUrlHomePage: map["customUrlHomePage"],
             debuggingEnabled: map["debuggingEnabled"],
+            adsDisabled: map["adsDisabled"],
+            immersiveReaderEnabled: map["immersiveReaderEnabled"],
             geminiApiKey: map["geminiApiKey"],
           )
         : null;
@@ -59,6 +67,8 @@ class BrowserSettings {
       "homePageEnabled": homePageEnabled,
       "customUrlHomePage": customUrlHomePage,
       "debuggingEnabled": debuggingEnabled,
+      "adsDisabled": adsDisabled,
+      "immersiveReaderEnabled": immersiveReaderEnabled,
       "geminiApiKey": geminiApiKey
     };
   }

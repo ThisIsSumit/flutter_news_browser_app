@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 enum Language {
   // ignore: constant_identifier_names
   English,
+  // ignore: constant_identifier_names
   Hindi,
+  // ignore: constant_identifier_names
   Telugu
 }
 

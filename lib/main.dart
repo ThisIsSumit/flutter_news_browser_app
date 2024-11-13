@@ -1,7 +1,7 @@
 import 'package:ferry/ferry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/Db/HiveDBHelper.dart';
+import 'package:flutter_browser/Db/hive_db_helper.dart';
 import 'package:flutter_browser/rss_news/client/client.dart';
 import 'package:flutter_browser/rss_news/services/summary_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -30,7 +30,6 @@ const double TAB_VIEWER_TOP_SCALE_TOP_OFFSET = 250.0;
 // ignore: constant_identifier_names
 const double TAB_VIEWER_TOP_SCALE_BOTTOM_OFFSET = 230.0;
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // ignore: unused_local_variable
@@ -45,11 +44,6 @@ void main() async {
   TAB_VIEWER_BOTTOM_OFFSET_3 = 150.0;
 
   await FlutterDownloader.initialize(debug: kDebugMode);
-
-  // await Permission.camera.request();
-  // await Permission.microphone.request();
-  // await Permission.storage.request();
-
   runApp(
     MultiProvider(
       providers: [
@@ -76,7 +70,7 @@ class FlutterBrowserApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Browser',
+      title: 'Flutter News Browser',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
