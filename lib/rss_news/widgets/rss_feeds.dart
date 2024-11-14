@@ -3,14 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
-import 'package:flutter_browser/rss_news/services/summary_provider.dart';
-import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 // import 'package:flutter_browser/src/constants/constants.dart';
 import 'package:xml/xml.dart' as xml;
 import 'dart:convert';
@@ -50,7 +46,7 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
 
     browserModel.addTab(
         WebViewTab(key: GlobalKey(), webViewModel: WebViewModel(url: url)));
-    executeJS(browserModel);
+   
   }
 
   DateTime _sortDateTime(String pubDate) {
@@ -123,10 +119,8 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _error = 'Failed to load RSS feeds: $e';
-      });
-      _isLoading = false;
+      _error = 'Failed to load RSS feeds: $e';
+        _isLoading = false;
     }
   }
 
@@ -231,36 +225,36 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
     );
   }
 
-  Future<String> loadLocalJs() async {
-    return await rootBundle.loadString('assets/js/remove_adds.js');
-  }
   
-  void executeJS(BrowserModel browserModel) async {
-    try {
-      final currentTab = browserModel.getCurrentTab();
-      if (currentTab == null) {
-        debugPrint("No current tab available");
-        return;
-      }
+  // has the code to initialize the webviewcontroller 
 
-      final webViewModel = currentTab.webViewModel;
 
-      await Future.delayed(const Duration(seconds: 1));
-      final webViewController = webViewModel.webViewController;
+//   void executeJS(BrowserModel browserModel) async {
+//     try {
+//       final currentTab = browserModel.getCurrentTab();
+//       if (currentTab == null) {
+//         debugPrint("No current tab available");
+//         return;
+//       }
 
-      if (webViewController == null) {
-        debugPrint("WebViewController is null");
-        return;
-      }
-      try {
-        String jsCode = await loadLocalJs();
-        await webViewController.evaluateJavascript(source: jsCode);
-      } catch (jsError) {
-        debugPrint("JavaScript execution error: $jsError");
-      }
-    } catch (e, stackTrace) {
-      debugPrint("Error in addNewTab: $e");
-      debugPrint("Stack trace: $stackTrace");
-    }
-  }
+//       final webViewModel = currentTab.webViewModel;
+
+//       await Future.delayed(const Duration(seconds: 1));
+//       final webViewController = webViewModel.webViewController;
+
+//       if (webViewController == null) {
+//         debugPrint("WebViewController is null");
+//         return;
+//       }
+//       try {
+//         String jsCode = await loadLocalJs();
+//         await webViewController.evaluateJavascript(source: jsCode);
+//       } catch (jsError) {
+//         debugPrint("JavaScript execution error: $jsError");
+//       }
+//     } catch (e, stackTrace) {
+//       debugPrint("Error in addNewTab: $e");
+//       debugPrint("Stack trace: $stackTrace");
+//     }
+//   }
 }

@@ -12,7 +12,6 @@ import 'package:flutter_browser/models/favorite_model.dart';
 import 'package:flutter_browser/models/web_archive_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/pages/developers/main.dart';
-import 'package:flutter_browser/pages/settings/adRemoverSettings.dart';
 import 'package:flutter_browser/pages/settings/main.dart';
 import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/tab_popup_menu_actions.dart';
@@ -85,13 +84,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     _searchController?.dispose();
     _searchController = null;
     super.dispose();
-  }
-
-  void _showEmptyTab() {
-    setState(() {
-      var browserModel = Provider.of<BrowserModel>(context, listen: false);
-      browserModel.webViewTabs.clear(); // Clear existing tabs
-    });
   }
 
   @override
@@ -677,11 +669,39 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
                       children: [
                         Text(choice),
                         const Icon(
-                          Icons.search,
+                          Ionicons.bulb,
                           color: Colors.black,
                         )
                       ]),
                 );
+              // case PopupMenuActions.BLOCK_ADDS:
+              //   return CustomPopupMenuItem<String>(
+              //     enabled: true,
+              //     value: choice,
+              //     child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(choice),
+              //           const Icon(
+              //             Ionicons.shield_checkmark_outline,
+              //             color: Colors.black,
+              //           )
+              //         ]),
+              //   );
+              // case PopupMenuActions.READER_MODE:
+              //   return CustomPopupMenuItem<String>(
+              //     enabled: true,
+              //     value: choice,
+              //     child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(choice),
+              //           const Icon(
+              //             Ionicons.glasses_outline,
+              //             color: Colors.black,
+              //           )
+              //         ]),
+              //   );
               case PopupMenuActions.INAPPWEBVIEW_PROJECT:
                 return CustomPopupMenuItem<String>(
                   enabled: true,
@@ -745,6 +765,12 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         break;
       case PopupMenuActions.FETCH_GEMINI_AI_HIGHLIGHTS:
         fetchAiHighlights(currentWebViewModel.url.toString(), context);
+        break;
+      case PopupMenuActions.BLOCK_ADDS:
+        // fetchAiHighlights(currentWebViewModel.url.toString(), context);
+        break;
+      case PopupMenuActions.READER_MODE:
+        // fetchAiHighlights(currentWebViewModel.url.toString(), context);
         break;
       case PopupMenuActions.SHARE:
         share();
@@ -1144,14 +1170,15 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       debugPrint('articlelink $url');
       List<String>? listSummary = box.get(url);
       listSummary ??= await summarizeIfNotAlready(url);
-        String jsCode = await loadLocalJs();
-        // Inject the list of strings to highlight into the JavaScript code
-        String finalJsCode = """
+      String jsCode = await loadLocalJs();
+      // Inject the list of strings to highlight into the JavaScript code
+      String finalJsCode = """
         window.textToHighlightList = ${listSummary.map((e) => "'${e.replaceAll("'", "\\'")}'").toList()};
         $jsCode
       """;
       // String newJS = await load();
-      final result = await webViewController!.evaluateJavascript(source: finalJsCode);
+      final result =
+          await webViewController!.evaluateJavascript(source: finalJsCode);
       debugPrint("rrrrrrrrrrrr" + result.toString());
     }
   }
