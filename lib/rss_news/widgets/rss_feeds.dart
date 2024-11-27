@@ -1,17 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 // import 'package:flutter_browser/src/constants/constants.dart';
 import 'package:xml/xml.dart' as xml;
-import 'dart:convert';
-import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
+
 import '../models/feed_item.dart';
 
 class RSSFeedScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
     //       .getHighlights(context, widget.feedUrls);
     // });
   }
-  
+
   void addNewTab({WebUri? url}) async {
     var browserModel = Provider.of<BrowserModel>(context, listen: false);
     var settings = browserModel.getSettings();
@@ -46,7 +46,6 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
 
     browserModel.addTab(
         WebViewTab(key: GlobalKey(), webViewModel: WebViewModel(url: url)));
-   
   }
 
   DateTime _sortDateTime(String pubDate) {
@@ -120,114 +119,421 @@ class _RSSFeedScreenState extends State<RSSFeedScreen> {
       });
     } catch (e) {
       _error = 'Failed to load RSS feeds: $e';
-        _isLoading = false;
+      _isLoading = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _isLoading
-              ? const Loader()
-              : _error.isNotEmpty
-                  ? Center(
-                      child: Text(
-                        _error,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _feedItems.length,
-                      itemBuilder: (context, index) {
-                        final item = _feedItems[index];
-                        return Card(
-                          color: Colors.white, // White background for the card
-                          // margin: const EdgeInsets.symmetric(
-                          //     vertical: 8, horizontal: 16),
-                          child: InkWell(
-                            onTap: () {
-                              addNewTab(url: WebUri(item.link.toString()));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title.toString(),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  if (item.imageUrl != null)
-                                    Image.network(
-                                      item.imageUrl!,
-                                      width: double
-                                          .infinity, // Image takes full width
-                                      height: 200, // Fixed height for image
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          'assets/news.jpeg',
-                                          width: double.infinity,
-                                          height: 200,
-                                          fit: BoxFit.cover,
-                                        );
+    // Determine the frequency of horizontal sections
+    const int verticalChunkSize =
+        3; // Show horizontal section after every 3 vertical items
+    const int horizontalSectionSize =
+        5; // Number of items in each horizontal section
+
+    // Separate vertical and horizontal items
+    final List<FeedItem> verticalItems = _feedItems
+        .asMap()
+        .entries
+        .where((entry) =>
+            entry.key % (verticalChunkSize + horizontalSectionSize) <
+            verticalChunkSize)
+        .map((entry) => entry.value)
+        .toList();
+
+    final List<FeedItem> horizontalItems = _feedItems
+        .asMap()
+        .entries
+        .where((entry) =>
+            entry.key % (verticalChunkSize + horizontalSectionSize) >=
+            verticalChunkSize)
+        .map((entry) => entry.value)
+        .toList();
+
+    return Scaffold(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error.isNotEmpty
+              ? Center(
+                  child: Text(
+                    _error,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: verticalItems.length +
+                      (horizontalItems.length ~/ horizontalSectionSize),
+                  itemBuilder: (context, index) {
+                    // Add horizontal section after every 3 vertical items
+                    if (index > 0 &&
+                        index % (verticalChunkSize + 1) == verticalChunkSize) {
+                      int horizontalIndex = index ~/
+                          (verticalChunkSize + 1) *
+                          horizontalSectionSize;
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 150, // Height for horizontal section
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: horizontalSectionSize,
+                              itemBuilder: (context, hIndex) {
+                                if (horizontalIndex + hIndex >=
+                                    horizontalItems.length) {
+                                  return const SizedBox.shrink();
+                                }
+                                final item =
+                                    horizontalItems[horizontalIndex + hIndex];
+                                return Container(
+                                  width: 200,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Card(
+                                    //  elevation: 3,
+                                    color: Colors.white,
+                                    child: InkWell(
+                                      onTap: () {
+                                        addNewTab(
+                                            url: WebUri(item.link.toString()));
                                       },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.source,
+                                                  size: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  item.source.toString(),
+                                                  style: const TextStyle(
+                                                      color: Colors.lightBlue),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Expanded(
+                                              child: Text(
+                                                item.title ?? "No Title",
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.calendar_today,
+                                                    size: 12,
+                                                    color: Colors.grey),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  item.pubDate != null
+                                                      ? _formatPubDate(
+                                                          item.pubDate!)
+                                                      : 'Unknown Date',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.calendar_today,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        item.pubDate != null
-                                            ? _formatPubDate(item.pubDate!)
-                                            : 'Unknown Date',
-                                        style:
-                                            const TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.source,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        item.source.toString(),
-                                        style: const TextStyle(
-                                            color: Colors.lightBlue),
-                                      ),
-                                    ],
+                                );
+                              },
+                            ),
+                          ),
+                       const   Padding(
+                            padding:  EdgeInsets.symmetric(horizontal: 15,vertical: 6),
+                            child:  Divider(),
+                          ), // Add a separator here
+                        ],
+                      );
+                    }
+
+                    // Vertical item
+                    final verticalIndex =
+                        index - (index ~/ (verticalChunkSize + 1));
+                    if (verticalIndex >= verticalItems.length) {
+                      return const SizedBox.shrink();
+                    }
+                    final item = verticalItems[verticalIndex];
+                    return Card(
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          addNewTab(url: WebUri(item.link.toString()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.title.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              const SizedBox(height: 8),
+                              if (item.imageUrl != null)
+                                Image.network(
+                                  item.imageUrl!,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/news.jpeg',
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today,
+                                      size: 16, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item.pubDate != null
+                                        ? _formatPubDate(item.pubDate!)
+                                        : 'Unknown Date',
+                                    style: const TextStyle(color: Colors.grey),
                                   ),
                                 ],
                               ),
-                            ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.source,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item.source.toString(),
+                                    style: const TextStyle(
+                                        color: Colors.lightBlue),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-        ),
-      ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
     );
+
+    // return Scaffold(
+    //   body: _isLoading
+    //       ? const Center(child: CircularProgressIndicator())
+    //       : _error.isNotEmpty
+    //           ? Center(
+    //               child: Text(
+    //                 _error,
+    //                 style: const TextStyle(color: Colors.red),
+    //               ),
+    //             )
+    //           : ListView.builder(
+    //               itemCount: verticalItems.length +
+    //                   (horizontalItems.length ~/ horizontalSectionSize),
+    //               itemBuilder: (context, index) {
+    //                 // Add horizontal section after every 3 vertical items
+    //                 if (index > 0 &&
+    //                     index % (verticalChunkSize + 1) == verticalChunkSize) {
+    //                   int horizontalIndex = index ~/
+    //                       (verticalChunkSize + 1) *
+    //                       horizontalSectionSize;
+    //                   return SizedBox(
+    //                     height: 150, // Height for horizontal section
+    //                     child: ListView.builder(
+    //                       scrollDirection: Axis.horizontal,
+    //                       itemCount: horizontalSectionSize,
+    //                       itemBuilder: (context, hIndex) {
+    //                         if (horizontalIndex + hIndex >=
+    //                             horizontalItems.length) {
+    //                           return const SizedBox.shrink();
+    //                         }
+    //                         final item =
+    //                             horizontalItems[horizontalIndex + hIndex];
+    //                         return Container(
+    //                           width: 200,
+    //                           margin: const EdgeInsets.symmetric(horizontal: 8),
+    //                           child: Card(
+    //                             //  elevation: 3,
+    //                             color: Colors.white,
+    //                             child: InkWell(
+    //                               onTap: () {
+    //                                 addNewTab(
+    //                                     url: WebUri(item.link.toString()));
+    //                               },
+    //                               child: Padding(
+    //                                 padding: const EdgeInsets.all(8),
+    //                                 child: Column(
+    //                                   crossAxisAlignment:
+    //                                       CrossAxisAlignment.start,
+    //                                   children: [
+    //                                     Row(
+    //                                       children: [
+    //                                         const Icon(
+    //                                           Icons.source,
+    //                                           size: 16,
+    //                                           color: Colors.grey,
+    //                                         ),
+    //                                         const SizedBox(width: 4),
+    //                                         Text(
+    //                                           item.source.toString(),
+    //                                           style: const TextStyle(
+    //                                               color: Colors.lightBlue),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                     const SizedBox(height: 4),
+    //                                     Expanded(
+    //                                       child: Text(
+    //                                         item.title ?? "No Title",
+    //                                         maxLines: 3,
+    //                                         overflow: TextOverflow.ellipsis,
+    //                                         style: const TextStyle(
+    //                                           fontSize: 14,
+    //                                           fontWeight: FontWeight.bold,
+    //                                         ),
+    //                                       ),
+    //                                     ),
+    //                                     const SizedBox(height: 4),
+    //                                     Row(
+    //                                       children: [
+    //                                         const Icon(
+    //                                           Icons.calendar_today,
+    //                                           size: 12,
+    //                                           color: Colors.grey,
+    //                                         ),
+    //                                         const SizedBox(width: 4),
+    //                                         Text(
+    //                                           item.pubDate != null
+    //                                               ? _formatPubDate(
+    //                                                   item.pubDate!)
+    //                                               : 'Unknown Date',
+    //                                           style: const TextStyle(
+    //                                             fontSize: 12,
+    //                                             color: Colors.grey,
+    //                                           ),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         );
+    //                       },
+    //                     ),
+    //                   );
+    //                 }
+
+    //                 // Vertical item
+    //                 final verticalIndex =
+    //                     index - (index ~/ (verticalChunkSize + 1));
+    //                 if (verticalIndex >= verticalItems.length) {
+    //                   return const SizedBox.shrink();
+    //                 }
+    //                 final item = verticalItems[verticalIndex];
+    //                 return Card(
+    //                   color: Colors.white,
+    //                   child: InkWell(
+    //                     onTap: () {
+    //                       addNewTab(url: WebUri(item.link.toString()));
+    //                     },
+    //                     child: Padding(
+    //                       padding: const EdgeInsets.all(16),
+    //                       child: Column(
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Text(
+    //                             item.title.toString(),
+    //                             style: const TextStyle(
+    //                                 fontWeight: FontWeight.bold, fontSize: 13),
+    //                           ),
+    //                           const SizedBox(height: 8),
+    //                           if (item.imageUrl != null)
+    //                             Image.network(
+    //                               item.imageUrl!,
+    //                               height: 200,
+    //                               width: double.infinity,
+    //                               fit: BoxFit.cover,
+    //                               errorBuilder: (context, error, stackTrace) {
+    //                                 return Image.asset(
+    //                                   'assets/news.jpeg',
+    //                                   height: 200,
+    //                                   width: double.infinity,
+    //                                   fit: BoxFit.cover,
+    //                                 );
+    //                               },
+    //                             ),
+    //                           const SizedBox(height: 8),
+    //                           Row(
+    //                             children: [
+    //                               const Icon(
+    //                                 Icons.calendar_today,
+    //                                 size: 16,
+    //                                 color: Colors.grey,
+    //                               ),
+    //                               const SizedBox(width: 4),
+    //                               Text(
+    //                                 item.pubDate != null
+    //                                     ? _formatPubDate(item.pubDate!)
+    //                                     : 'Unknown Date',
+    //                                 style: const TextStyle(color: Colors.grey),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                           const SizedBox(height: 4),
+    //                           Row(
+    //                             children: [
+    //                               const Icon(
+    //                                 Icons.source,
+    //                                 size: 16,
+    //                                 color: Colors.grey,
+    //                               ),
+    //                               const SizedBox(width: 4),
+    //                               Text(
+    //                                 item.source.toString(),
+    //                                 style: const TextStyle(
+    //                                     color: Colors.lightBlue),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    // );
   }
 
-  
-  // has the code to initialize the webviewcontroller 
-
+  // has the code to initialize the webviewcontroller
 
 //   void executeJS(BrowserModel browserModel) async {
 //     try {
