@@ -31,6 +31,7 @@ import '../custom_popup_menu_item.dart';
 import '../models/most_visited_website_model.dart';
 import '../popup_menu_actions.dart';
 import '../project_info_popup.dart';
+import '../pages/childsActivity/childs_activity_page.dart';
 import '../webview_tab.dart';
 import 'package:http/http.dart' as http;
 
@@ -617,6 +618,20 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
                         )
                       ]),
                 );
+              case PopupMenuActions.CHILD_ACTIVITY:
+                return CustomPopupMenuItem<String>(
+                  enabled: true,
+                  value: choice,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(choice),
+                        const Icon(
+                          Icons.child_care,
+                          color: Colors.blue,
+                        )
+                      ]),
+                );
               case PopupMenuActions.DESKTOP_MODE:
                 return CustomPopupMenuItem<String>(
                   enabled: browserModel.getCurrentTab() != null,
@@ -723,34 +738,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
                         )
                       ]),
                 );
-              // case PopupMenuActions.BLOCK_ADDS:
-              //   return CustomPopupMenuItem<String>(
-              //     enabled: true,
-              //     value: choice,
-              //     child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(choice),
-              //           const Icon(
-              //             Ionicons.shield_checkmark_outline,
-              //             color: Colors.black,
-              //           )
-              //         ]),
-              //   );
-              // case PopupMenuActions.READER_MODE:
-              //   return CustomPopupMenuItem<String>(
-              //     enabled: true,
-              //     value: choice,
-              //     child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(choice),
-              //           const Icon(
-              //             Ionicons.glasses_outline,
-              //             color: Colors.black,
-              //           )
-              //         ]),
-              //   );
               case PopupMenuActions.INAPPWEBVIEW_PROJECT:
                 return CustomPopupMenuItem<String>(
                   enabled: true,
@@ -799,6 +786,9 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       case PopupMenuActions.WEB_ARCHIVES:
         showWebArchives();
         break;
+      case PopupMenuActions.CHILD_ACTIVITY:
+        goToChildsActivityPage();
+        break;
       case PopupMenuActions.FIND_ON_PAGE:
         var isFindInteractionEnabled =
             currentWebViewModel.settings?.isFindInteractionEnabled ?? false;
@@ -814,12 +804,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         break;
       case PopupMenuActions.FETCH_GEMINI_AI_HIGHLIGHTS:
         fetchAiHighlights(currentWebViewModel.url.toString(), context);
-        break;
-      case PopupMenuActions.BLOCK_ADDS:
-        // fetchAiHighlights(currentWebViewModel.url.toString(), context);
-        break;
-      case PopupMenuActions.READER_MODE:
-        // fetchAiHighlights(currentWebViewModel.url.toString(), context);
         break;
       case PopupMenuActions.SHARE:
         share();
@@ -1136,6 +1120,11 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
   void goToSettingsPage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+  }
+
+  void goToChildsActivityPage() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ChildsActivityPage()));
   }
 
   void openProjectPopup() {

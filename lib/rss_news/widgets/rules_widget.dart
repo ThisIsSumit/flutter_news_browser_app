@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/Db/hive_db_helper.dart';
+import 'package:flutter_browser/rss_news/utils/show_snackbar.dart';
 
 import '../models/rules_model.dart';
 
@@ -93,7 +94,7 @@ class _RulesWidgetState extends State<RulesWidget> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               if (ruleCategory == null ||
                   ruleType == null ||
                   ruleValue == null ||
@@ -117,15 +118,15 @@ class _RulesWidgetState extends State<RulesWidget> {
               } else {
                 if (editIndex != null) {
                   // If editing, update the rule at the editIndex
-                  HiveDBHelper.removeRule(editIndex);
-                  HiveDBHelper.addRule(Rules(
+                 await HiveDBHelper.removeRule(editIndex);
+                 await HiveDBHelper.addRule(Rules(
                     category: ruleCategory!,
                     type: ruleType!,
                     value: ruleValue!,
                     domain: websiteDomainValue!,
                   ));
                 } else {
-                  HiveDBHelper.addRule(Rules(
+                 await HiveDBHelper.addRule(Rules(
                     category: ruleCategory!,
                     type: ruleType!,
                     value: ruleValue!,
@@ -133,8 +134,6 @@ class _RulesWidgetState extends State<RulesWidget> {
                   ));
                 }
                 // debugPrint(rules.toString());
-                debugPrint(
-                    "sssssssssssss" + HiveDBHelper.getAllRules().toString());
                 Navigator.pop(context);
               }
             },
@@ -142,8 +141,8 @@ class _RulesWidgetState extends State<RulesWidget> {
           ),
           if (editIndex != null)
             TextButton(
-              onPressed: () {
-                HiveDBHelper.removeRule(editIndex);
+              onPressed: () async {
+              await  HiveDBHelper.removeRule(editIndex);
                 Navigator.pop(context);
               },
               // Disable the button if editIndex is null
@@ -216,7 +215,9 @@ class _RulesWidgetState extends State<RulesWidget> {
                       ),
                     );
                   } else {
-                    debugPrint("No rules available to edit.");
+                    showSnackBar(
+                      message: "No rules to edit",
+                    );
                   }
                 },
               )

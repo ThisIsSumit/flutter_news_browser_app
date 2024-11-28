@@ -1,13 +1,15 @@
-import 'package:ferry/ferry.dart';
 import 'package:ferry/typed_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/Db/hive_db_helper.dart';
 import 'package:flutter_browser/empty_tab.dart';
-import 'package:flutter_browser/rss_news/client/client.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/rss_news/services/summary_provider.dart';
+import 'package:flutter_browser/rss_news/services/unique_id.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_browser/models/browser_model.dart';
@@ -45,8 +47,12 @@ void main() async {
   Hive.registerAdapter(MostVisitedWebsiteModelAdapter());
   await Hive.openBox<MostVisitedWebsiteModel>('mostVisitedWebsites');
   await Hive.openBox<List<String>>('preferences');
-
-  final Client client = await initClient(); // don't remove this line
+  await Hive.initFlutter();
+  deviceId = await UniqueId.initUniqueIdentifierState();
+  store = await HiveStore.open(
+    boxName: "grpahql",
+  );
+  await Hive.openBox<List<String>>("preferences");
   WEB_ARCHIVE_DIR = (await getApplicationSupportDirectory()).path;
 
   TAB_VIEWER_BOTTOM_OFFSET_1 = 130.0;
@@ -81,6 +87,7 @@ class FlutterBrowserApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter News Browser',
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,

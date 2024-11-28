@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/search_engine_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
-
+import 'package:flutter_browser/rss_news/widgets/register_child_widget.dart';
+import 'package:flutter_browser/rss_news/widgets/register_device_widget.dart';
 import 'package:flutter_browser/rss_news/widgets/rules_widget.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_browser/webview_tab.dart';
@@ -125,6 +126,8 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
           }
         },
       ),
+      const RegisterDeviceWidget(),
+      const RegisterChildWidget(),
       const RulesWidget(),
       SwitchListTile(
         title: const Text("Block Ads"),

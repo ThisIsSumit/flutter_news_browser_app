@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late String selectedLanguage;
 
   // late Future<List<GGetFeedsData_getFeeds>> categoryFeeds;
-  late Future<List<Feed>> categoryFeeds;
+  late List<Feed> categoryFeeds;
   // final FetchFeeds _fetchFeeds = FetchFeeds();
   final FetchStaticFeeds _fetchStaticFeeds = FetchStaticFeeds();
   final FeedsByCategoryController _feedsByCategoryController =
@@ -48,8 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _categories = box.get('selectedCategories')!;
     final sources = box.get('selectedSources')!;
     if (language != null) {
-      categoryFeeds =
-          _fetchStaticFeeds.feedsBySelectedSource(language, _categories, sources);
+      categoryFeeds = await _fetchStaticFeeds.feedsBySelectedSource(
+          language, _categories, sources);
       debugPrint(categoryFeeds.toString());
       setState(() {
         isLoading = false;
@@ -67,7 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = true;
       });
       debugPrint(category);
-      final feeds = await _feedsByCategoryController.byAStaticCategory(category);
+      final feeds =
+          await _feedsByCategoryController.byAStaticCategory(category);
       setState(() {
         feedsByACategory = feeds;
         selectedCategory = category;
@@ -85,8 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
       feedsByACategory =
           await _feedsByCategoryController.byAStaticCategory(selectedCategory);
     }
-    debugPrint('refreshing');
-
     setState(() {
       isLoading = false;
     });
@@ -95,82 +94,78 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: _refreshData,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  NavBar(
-                    categories: _categories,
-                    selectedCategory: selectedCategory,
-                    onCategoryTap: _onCategoryTap,
-                  ),
-                  Container(
-                    color: Colors.white,
-                    height: 40,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.refresh),
-                          onPressed: _refreshData,
-                        ),
-                        PopupMenuButton<String>(
-                          color: Colors.white,
-                          icon: const Icon(Icons.edit),
-                          onSelected: (String result) {
-                            if (result == 'lan') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const LanguageSelectionScreen(
-                                    fromWelcomeScreen: false,
-                                  ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                NavBar(
+                  categories: _categories,
+                  selectedCategory: selectedCategory,
+                  onCategoryTap: _onCategoryTap,
+                ),
+                Container(
+                  color: Colors.white,
+                  height: 40,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: _refreshData,
+                      ),
+                      PopupMenuButton<String>(
+                        color: Colors.white,
+                        icon: const Icon(Icons.edit),
+                        onSelected: (String result) {
+                          if (result == 'lan') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const LanguageSelectionScreen(
+                                  fromWelcomeScreen: false,
                                 ),
-                              );
-                            } else if (result == 'category') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CategoriesSelectionScreen(
-                                    fromWelcomeScreen: false,
-                                  ),
+                              ),
+                            );
+                          } else if (result == 'category') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CategoriesSelectionScreen(
+                                  fromWelcomeScreen: false,
                                 ),
-                              );
-                            }
-                          },
-                          itemBuilder: (BuildContext context) => [
-                            const PopupMenuItem<String>(
-                              value: 'lan',
-                              child: Text('Change Language'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'category',
-                              child: Text('Change Categories'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                              ),
+                            );
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem<String>(
+                            value: 'lan',
+                            child: Text('Change Language'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'category',
+                            child: Text('Change Categories'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Expanded(
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : selectedCategory.isEmpty
-                        ? error.isNotEmpty
-                            ? Center(child: Text(error))
-                            : HomeFeeds(customLanguageFeeds: categoryFeeds)
-                        : CustomCategoryFeeds(
-                            feedsByACategory: feedsByACategory),
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : selectedCategory.isEmpty
+                      ? error.isNotEmpty
+                          ? Center(child: Text(error))
+                          : HomeFeeds(customLanguageFeeds: categoryFeeds)
+                      : CustomCategoryFeeds(feedsByACategory: feedsByACategory),
+            ),
+          ],
         ),
       ),
     );
