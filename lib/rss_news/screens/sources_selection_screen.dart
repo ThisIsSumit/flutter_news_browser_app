@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/browser.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
@@ -62,7 +63,7 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const FlutterBrowserApp(),
+          builder: (context) => const Browser(),
         ),
       );
     } else {

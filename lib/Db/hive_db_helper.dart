@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/rss_news/models/most_visited_website_model.dart';
 import 'package:flutter_browser/rss_news/models/device_model.dart';
 import 'package:flutter_browser/rss_news/models/rules_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,10 +14,12 @@ class HiveDBHelper {
     Hive.init(appDirectory.path);
     Hive.registerAdapter(RulesAdapter());
     Hive.registerAdapter(DeviceAdapter());
+    Hive.registerAdapter(MostVisitedWebsiteModelAdapter());
     await Hive.openBox('rules');
     await Hive.openBox('device');
     await Hive.openBox('child_devices');
-
+    await Hive.openBox<MostVisitedWebsiteModel>('mostVisitedWebsites');
+    await Hive.openBox<List<String>>('preferences');
     debugPrint("Initialized Hive DB successfully");
   }
 

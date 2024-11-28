@@ -43,8 +43,8 @@ class _ProjectInfoPopupState extends State<ProjectInfoPopup> {
           size: 40.0,
         ),
         style: ButtonStyle(
-            backgroundColor:MaterialStateColor.resolveWith(
-              (states) => Colors.grey.shade300)),
+            backgroundColor: MaterialStateColor.resolveWith(
+                (states) => Colors.grey.shade300)),
         label: RichText(
           text: const TextSpan(children: [
             TextSpan(text: "Github: ", style: TextStyle(color: Colors.black)),
@@ -77,8 +77,7 @@ class _ProjectInfoPopupState extends State<ProjectInfoPopup> {
           size: 40.0,
         ),
         style: ButtonStyle(
-            backgroundColor:
-               MaterialStateColor.resolveWith(
+            backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Colors.grey.shade300)),
         label: RichText(
           text: const TextSpan(children: [

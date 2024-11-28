@@ -235,8 +235,8 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         widget.webViewModel.favicon = null;
         widget.webViewModel.loaded = true;
         if (url != null && HiveDBHelper.getDevice() != null) {
-           await GraphQLRequests().pushLog(url.host.toString(),
-              url.toString(), HiveDBHelper.getDevice()!.id!, "Duplicate");
+          await GraphQLRequests().pushLog(url.host.toString(), url.toString(),
+              HiveDBHelper.getDevice()!.id!, "Duplicate");
         }
 
         var sslCertificateFuture = _webViewController?.getCertificate();

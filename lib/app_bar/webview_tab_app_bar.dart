@@ -13,6 +13,7 @@ import 'package:flutter_browser/models/web_archive_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
 import 'package:flutter_browser/pages/developers/main.dart';
 import 'package:flutter_browser/pages/settings/main.dart';
+import 'package:flutter_browser/rss_news/models/most_visited_website_model.dart';
 import 'package:flutter_browser/rss_news/services/summeriz_article.dart';
 import 'package:flutter_browser/tab_popup_menu_actions.dart';
 import 'package:flutter_browser/util.dart';
@@ -23,17 +24,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
+import 'package:http/http.dart' as http;
 import '../animated_flutter_browser_logo.dart';
 import '../custom_popup_dialog.dart';
 import '../custom_popup_menu_item.dart';
-import '../models/most_visited_website_model.dart';
 import '../popup_menu_actions.dart';
 import '../project_info_popup.dart';
 import '../pages/childsActivity/childs_activity_page.dart';
 import '../webview_tab.dart';
-import 'package:http/http.dart' as http;
 
 class WebViewTabAppBar extends StatefulWidget {
   final void Function()? showFindOnPage;
@@ -80,26 +78,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       }
     });
   }
-
-
-  /// Helper function to extract the base domain
-  String _extractBaseDomain(String domain) {
-    final parts = domain.split('.');
-    return parts.length > 2 ? parts.sublist(parts.length - 2).join('.') : domain;
-  }
-
-  /// Helper function to check if a URL points to a valid image
-  Future<bool> _isValidImageUrl(String url) async {
-    try {
-      final response = await http.head(Uri.parse(url));
-      final contentType = response.headers['content-type'] ?? '';
-      return response.statusCode == 200 && contentType.startsWith('image/');
-    } catch (e) {
-      print("Error checking image URL: $url, Error: $e");
-      return false;
-    }
-  }
-
 
   @override
   void dispose() {
@@ -172,15 +150,14 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
           TextField(
             onSubmitted: (value) async {
               var url = WebUri(value.trim());
-              if (!url.scheme.startsWith("http") && !Util.isLocalizedContent(url)) {
+              if (!url.scheme.startsWith("http") &&
+                  !Util.isLocalizedContent(url)) {
                 url = WebUri(settings.searchEngine.searchUrl + value);
               }
 
               if (webViewController != null) {
-                // Load the URL in the existing WebView
-                await webViewController.loadUrl(urlRequest: URLRequest(url: url));
+                webViewController.loadUrl(urlRequest: URLRequest(url: url));
               } else {
-                // Add a new tab and load the URL
                 addNewTab(url: url);
                 webViewModel.url = url;
               }
@@ -232,30 +209,6 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
         ],
       ),
     );
-  }
-
-  /// Extracts a meaningful name from the search input or URL.
-  String _extractNameFromInput(String value) {
-    String result;
-
-    if (value.contains("://")) {
-      final url = WebUri(value);
-      final parts = url.host.split('.');
-
-      // Find the longest part in the domain
-      result = parts.reduce((a, b) => a.length >= b.length ? a : b);
-    } else {
-      final words = value.split(' ');
-      // If there are one or two words, take both; otherwise, take the first two
-      result = words.length <= 2 ? value : words.take(2).join(' ');
-    }
-
-    // Capitalize the first character and concatenate with the rest of the string
-    if (result.isNotEmpty) {
-      return result[0].toUpperCase() + result.substring(1);
-    }
-
-    return result; // Return empty string if result is empty
   }
 
   List<Widget> _buildActionsMenu() {
@@ -1221,6 +1174,48 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     }
   }
 
+  String _extractBaseDomain(String domain) {
+    final parts = domain.split('.');
+    return parts.length > 2
+        ? parts.sublist(parts.length - 2).join('.')
+        : domain;
+  }
+
+  /// Helper function to check if a URL points to a valid image
+  Future<bool> _isValidImageUrl(String url) async {
+    try {
+      final response = await http.head(Uri.parse(url));
+      final contentType = response.headers['content-type'] ?? '';
+      return response.statusCode == 200 && contentType.startsWith('image/');
+    } catch (e) {
+      print("Error checking image URL: $url, Error: $e");
+      return false;
+    }
+  }
+
+  String _extractNameFromInput(String value) {
+    String result;
+
+    if (value.contains("://")) {
+      final url = WebUri(value);
+      final parts = url.host.split('.');
+
+      // Find the longest part in the domain
+      result = parts.reduce((a, b) => a.length >= b.length ? a : b);
+    } else {
+      final words = value.split(' ');
+      // If there are one or two words, take both; otherwise, take the first two
+      result = words.length <= 2 ? value : words.take(2).join(' ');
+    }
+
+    // Capitalize the first character and concatenate with the rest of the string
+    if (result.isNotEmpty) {
+      return result[0].toUpperCase() + result.substring(1);
+    }
+
+    return result; // Return empty string if result is empty
+  }
+
   Future<void> _saveMostVisitedWebsite(String urlString) async {
     final url = WebUri(urlString);
     final box = Hive.box<MostVisitedWebsiteModel>('mostVisitedWebsites');
@@ -1232,7 +1227,8 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
     // final name = webViewModel?.title.toString() ?? url.host;
     final name = _extractNameFromInput(urlString);
-    final faviconUrl = webViewModel?.favicon ?? "${url.scheme}://${url.host}/favicon.ico";
+    final faviconUrl =
+        webViewModel?.favicon ?? "${url.scheme}://${url.host}/favicon.ico";
 
     // Skip saving if URL starts with "www.google"
     if (url.host.startsWith("www.google")) {
@@ -1250,12 +1246,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
     final baseDomain = _extractBaseDomain(url.host);
 
     // Check if a similar domain already exists in the box
-    final existingWebsite = box.values
-        .cast<MostVisitedWebsiteModel?>()
-        .firstWhere(
-          (website) => website != null && _extractBaseDomain(WebUri(website.domain).host) == baseDomain,
-      orElse: () => null,
-    );
+    final existingWebsite =
+        box.values.cast<MostVisitedWebsiteModel?>().firstWhere(
+              (website) =>
+                  website != null &&
+                  _extractBaseDomain(WebUri(website.domain).host) == baseDomain,
+              orElse: () => null,
+            );
 
     if (existingWebsite != null) {
       // Update visit count and last visit time
@@ -1267,7 +1264,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       // Add a new entry
       await box.add(
         MostVisitedWebsiteModel(
-          id: UniqueKey().toString(),
+          id: GlobalKey().toString(),
           domain: urlString,
           faviconUrl: faviconUrl.toString(),
           visitCount: 1,

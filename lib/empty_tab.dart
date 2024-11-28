@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/rss_news/models/most_visited_website_model.dart';
 import 'package:flutter_browser/rss_news/screens/home_screen.dart';
 import 'package:flutter_browser/rss_news/screens/app_language_selection_screen.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter_browser/models/most_visited_website_model.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'models/browser_model.dart';
@@ -22,6 +22,12 @@ class EmptyTab extends StatefulWidget {
 
 class _EmptyTabState extends State<EmptyTab> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
@@ -30,8 +36,11 @@ class _EmptyTabState extends State<EmptyTab> {
           children: [
             // Top 10 Most Visited Websites
             ValueListenableBuilder(
-              valueListenable: Hive.box<MostVisitedWebsiteModel>('mostVisitedWebsites').listenable(),
-              builder: (BuildContext context, Box<MostVisitedWebsiteModel> box, Widget? child) {
+              valueListenable:
+                  Hive.box<MostVisitedWebsiteModel>('mostVisitedWebsites')
+                      .listenable(),
+              builder: (BuildContext context, Box<MostVisitedWebsiteModel> box,
+                  Widget? child) {
                 final websites = box.values.toList()
                   ..sort((a, b) => b.visitCount.compareTo(a.visitCount));
                 final topWebsites = websites.take(10).toList();
@@ -44,8 +53,10 @@ class _EmptyTabState extends State<EmptyTab> {
             // Main content (HomeScreen or AppLanguageSelectionScreen)
             Expanded(
               child: ValueListenableBuilder(
-                valueListenable: Hive.box<List<String>>('preferences').listenable(),
-                builder: (BuildContext context, Box<List<String>> box, Widget? child) {
+                valueListenable:
+                    Hive.box<List<String>>('preferences').listenable(),
+                builder: (BuildContext context, Box<List<String>> box,
+                    Widget? child) {
                   final sources = box.get('selectedSources') ?? [];
                   return sources.isNotEmpty
                       ? const HomeScreen()
@@ -112,7 +123,8 @@ class _EmptyTabState extends State<EmptyTab> {
     }
 
     if (widget.webViewController != null) {
-      webViewModel.webViewController!.loadUrl(urlRequest: URLRequest(url: webUri));
+      webViewModel.webViewController!
+          .loadUrl(urlRequest: URLRequest(url: webUri));
     } else {
       addNewTab(url: webUri);
       webViewModel.url = webUri;

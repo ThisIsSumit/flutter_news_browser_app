@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadSelectedLanguage() async {
+    if (!mounted) return; // Ensure widget is still in the tree
     setState(() {
       isLoading = true;
     });
@@ -51,9 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
       categoryFeeds = await _fetchStaticFeeds.feedsBySelectedSource(
           language, _categories, sources);
       debugPrint(categoryFeeds.toString());
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        // Check again before updating the state
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
