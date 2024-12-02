@@ -37,7 +37,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
     final language = box.get('selectedLanguages');
     debugPrint('lan${language.toString()}');
     if (language != null) {
-      // final feeds = await _fetchFeeds.feedsBySelectedLanguage(language);
+      // we only need categories here so we need q query to only fetch categories with filter of  languages
       final feeds = await _fetchStaticFeeds.feedsBySelectedLanguage(language);
 
       final List<String> categories =
@@ -68,9 +68,10 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   void _saveSelectedCategories() async {
     if (_selectedCategories.length > 1) {
       final box = Hive.box<List<String>>('preferences');
-      box.put('selectedCategories', _selectedCategories);
+      await box.put('selectedCategories', _selectedCategories);
       // // debugPrint(_selectedCategories.toString());
       if (widget.fromWelcomeScreen) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Great! Please Swipe right to select sources.'),
@@ -80,6 +81,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
         );
       } else {
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => const SourcesSelectionScreen(),

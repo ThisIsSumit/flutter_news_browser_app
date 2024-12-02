@@ -43,20 +43,3 @@ class Feed {
 
 // Updated fetch function
 
-// Example usage
-// void example() async {
-//   try {
-//     List<Feed> feeds = await fetchStaticFeeds();
-//     for (var feed in feeds) {
-//       print('Feed ID: ${feed.id}');
-//       print('Source: ${feed.source}');
-//       print('Category: ${feed.category}');
-//       print('Language: ${feed.language}');
-//       print('Feed URL: ${feed.feedUrl}');
-//       print('Weight: ${feed.weight}');
-//       print('---');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-// }

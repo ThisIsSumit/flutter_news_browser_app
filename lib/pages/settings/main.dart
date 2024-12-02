@@ -85,12 +85,12 @@ class _SettingsPageState extends State<SettingsPage> {
                             )
                           ]),
                     ),
-                    CustomPopupMenuItem<String>(
+                    const CustomPopupMenuItem<String>(
                       enabled: true,
                       value: PopupSettingsMenuActions.RESET_WEBVIEW_SETTINGS,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
+                          children: [
                             Text(PopupSettingsMenuActions
                                 .RESET_WEBVIEW_SETTINGS),
                             Icon(

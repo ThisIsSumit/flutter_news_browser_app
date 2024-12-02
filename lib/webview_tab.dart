@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/Db/hive_db_helper.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/models/webview_model.dart';
+import 'package:flutter_browser/rss_news/grpahql/graphql_requests.dart';
 import 'package:flutter_browser/rss_news/services/custom_rules.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -232,6 +234,10 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         widget.webViewModel.url = url;
         widget.webViewModel.favicon = null;
         widget.webViewModel.loaded = true;
+        if (url != null && HiveDBHelper.getDevice() != null) {
+          await GraphQLRequests().pushLog(url.host.toString(), url.toString(),
+              HiveDBHelper.getDevice()!.id!, "Duplicate");
+        }
 
         var sslCertificateFuture = _webViewController?.getCertificate();
         var titleFuture = _webViewController?.getTitle();
