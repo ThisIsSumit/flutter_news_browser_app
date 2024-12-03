@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_browser/rss_news/constants/constants.dart';
 import 'package:flutter_browser/rss_news/grpahql/graphql_raw.dart';
 import 'package:flutter_browser/rss_news/grpahql/graphql_services.dart';
+import 'package:flutter_browser/rss_news/models/book_model.dart';
 import 'package:flutter_browser/rss_news/models/device_model.dart';
 import 'package:flutter_browser/rss_news/models/feed_model.dart';
 import 'package:flutter_browser/rss_news/utils/show_snackbar.dart';
@@ -10,8 +12,8 @@ class GraphQLRequests {
   GraphQLRequests();
 
   Future<List<Feed>?> getFeeds() async {
-    final response =
-        await GraphQLService().performQuery(GraphQLRaw.getFeeds, variables: {});
+    final response = await GraphQLService(parentalControlApiUrl)
+        .performQuery(GraphQLRaw.getFeeds, variables: {});
 
     if (response.hasException) {
       debugPrint('GraphQL Error: ${response.exception}');
@@ -28,7 +30,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> createDevice(Device device) async {
-    final response = await GraphQLService()
+    final response = await GraphQLService(parentalControlApiUrl)
         .performMutation(GraphQLRaw.createDevice, variables: {
       'id': device.deviceId,
       'name': device.deviceName,
@@ -50,7 +52,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> updateDevice(Device device) async {
-    final response = await GraphQLService()
+    final response = await GraphQLService(parentalControlApiUrl)
         .performMutation(GraphQLRaw.updateDevice, variables: {
       'id': device.id,
       'name': device.deviceName,
@@ -69,7 +71,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> getDeviceById(String id) async {
-    final response = await GraphQLService()
+    final response = await GraphQLService(parentalControlApiUrl)
         .performQuery(GraphQLRaw.getDeviceById, variables: {
       'id': id,
     });
@@ -88,8 +90,8 @@ class GraphQLRequests {
 
   Future<Map<String, dynamic>?> pushLog(
       String domain, String pageUrl, String deviceId, String category) async {
-    final response =
-        await GraphQLService().performQuery(GraphQLRaw.pushLog, variables: {
+    final response = await GraphQLService(parentalControlApiUrl)
+        .performQuery(GraphQLRaw.pushLog, variables: {
       'domain': domain,
       'page_url': pageUrl,
       'device_id': deviceId,
@@ -109,7 +111,7 @@ class GraphQLRequests {
   }
 
   Future<List<Object?>> childsActivities(String deviceId) async {
-    final response = await GraphQLService().performQuery(
+    final response = await GraphQLService(parentalControlApiUrl).performQuery(
       GraphQLRaw.childsActivities,
       variables: {
         'deviceId': deviceId,
@@ -126,5 +128,47 @@ class GraphQLRequests {
     return data != null && data.containsKey('getAllWebsiteUsageLogs')
         ? data['getAllWebsiteUsageLogs'] as List<Object?>
         : [];
+  }
+
+  Future<Map<String, dynamic>?> createSession(String className, String subject,
+      String topic, String chapter, String subtopic, int duration) async {
+    final response = await GraphQLService(parentalControlApiUrl)
+        .performQuery(GraphQLRaw.createSession, variables: {
+      "class": className,
+      "subject": subject,
+      "chapter": chapter,
+      "topic": topic,
+      "subtopic": subtopic,
+      "duration": duration
+    });
+
+    if (response.hasException) {
+      showSnackBar(message: response.exception!.toString());
+      return null;
+    }
+
+    final Map<String, dynamic>? data = response.data;
+
+    return data != null && data.containsKey('createSession')
+        ? data['createSession'] as Map<String, dynamic>
+        : null;
+  }
+
+  Future<List<Book>?> getBooks() async {
+    final response = await GraphQLService(erpSchoolApiUrl)
+        .performQuery(GraphQLRaw.getBooks, variables: {});
+
+    if (response.hasException) {
+      showSnackBar(message: response.exception.toString());
+      return null;
+    }
+
+    final Map<String, dynamic>? data = response.data;
+
+    return data != null && data.containsKey('getBooks')
+        ? (data['getBooks'] as List<dynamic>)
+            .map((e) => Book.fromMap(e as Map<String, dynamic>))
+            .toList()
+        : null;
   }
 }

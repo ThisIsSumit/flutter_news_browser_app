@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/Db/hive_db_helper.dart';
 import 'package:flutter_browser/rss_news/constants/constants.dart';
+import 'package:flutter_browser/rss_news/services/backgroundTokenService.dart';
 import 'package:flutter_browser/rss_news/services/unique_id.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -38,6 +39,7 @@ void main() async {
   await HiveDBHelper.initializeHive();
   deviceId = await UniqueId.initUniqueIdentifierState();
   store = await HiveStore.open(boxName: "graphql");
+  BackgroundTokenService.initialize();
   WEB_ARCHIVE_DIR = (await getApplicationSupportDirectory()).path;
   TAB_VIEWER_BOTTOM_OFFSET_1 = 130.0;
   TAB_VIEWER_BOTTOM_OFFSET_2 = 140.0;

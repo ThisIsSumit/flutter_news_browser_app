@@ -36,7 +36,7 @@ import '../webview_tab.dart';
 class WebViewTabAppBar extends StatefulWidget {
   final void Function()? showFindOnPage;
 
-  const WebViewTabAppBar({Key? key, this.showFindOnPage}) : super(key: key);
+  const WebViewTabAppBar({super.key, this.showFindOnPage});
 
   @override
   State<WebViewTabAppBar> createState() => _WebViewTabAppBarState();
@@ -70,7 +70,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
           !_focusNode!.hasFocus &&
           _searchController != null &&
           _searchController!.text.isEmpty) {
-        var browserModel = Provider.of<BrowserModel>(context, listen: true);
+        var browserModel = Provider.of<BrowserModel>(context, listen: false);
         var webViewModel = browserModel.getCurrentTab()?.webViewModel;
         var webViewController = webViewModel?.webViewController;
         _searchController!.text =
@@ -1158,7 +1158,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
     {
       final box = Hive.box<List<String>>('preferences');
-      debugPrint('articlelink $url');
+      // debugPrint('articlelink $url');
       List<String>? listSummary = box.get(url);
       listSummary ??= await summarizeIfNotAlready(url);
       String jsCode = await loadLocalJs();
@@ -1188,7 +1188,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       final contentType = response.headers['content-type'] ?? '';
       return response.statusCode == 200 && contentType.startsWith('image/');
     } catch (e) {
-      print("Error checking image URL: $url, Error: $e");
+      // print("Error checking image URL: $url, Error: $e");
       return false;
     }
   }
@@ -1232,13 +1232,13 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
 
     // Skip saving if URL starts with "www.google"
     if (url.host.startsWith("www.google")) {
-      print("Skipped saving: $urlString (Google URL)");
+      // print("Skipped saving: $urlString (Google URL)");
       return;
     }
 
     // Check if the favicon exists and is an image
     if (!await _isValidImageUrl(faviconUrl.toString())) {
-      print("Skipped saving: $urlString (Invalid or missing favicon)");
+      // print("Skipped saving: $urlString (Invalid or missing favicon)");
       return;
     }
 
@@ -1259,7 +1259,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
       existingWebsite.visitCount += 1;
       existingWebsite.addedAt = now;
       await existingWebsite.save();
-      print("Updated existing website: ${existingWebsite.domain}");
+      // print("Updated existing website: ${existingWebsite.domain}");
     } else {
       // Add a new entry
       await box.add(
@@ -1273,7 +1273,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
           name: name,
         ),
       );
-      print("Added new website: $urlString");
+      // print("Added new website: $urlString");
     }
   }
 }
