@@ -40,6 +40,7 @@ void main() async {
   deviceId = await UniqueId.initUniqueIdentifierState();
   store = await HiveStore.open(boxName: "graphql");
   BackgroundTokenService.initialize();
+
   WEB_ARCHIVE_DIR = (await getApplicationSupportDirectory()).path;
   TAB_VIEWER_BOTTOM_OFFSET_1 = 130.0;
   TAB_VIEWER_BOTTOM_OFFSET_2 = 140.0;

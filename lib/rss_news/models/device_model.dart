@@ -1,4 +1,6 @@
-
+// To parse this JSON data, do
+//
+//     final device = deviceFromJson(jsonString);
 import 'package:hive/hive.dart';
 import 'dart:convert';
 

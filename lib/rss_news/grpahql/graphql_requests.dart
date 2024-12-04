@@ -12,6 +12,7 @@ class GraphQLRequests {
   GraphQLRequests();
 
   Future<List<Feed>?> getFeeds() async {
+
     final response = await GraphQLService(parentalControlApiUrl)
         .performQuery(GraphQLRaw.getFeeds, variables: {});
 
@@ -30,6 +31,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> createDevice(Device device) async {
+
     final response = await GraphQLService(parentalControlApiUrl)
         .performMutation(GraphQLRaw.createDevice, variables: {
       'id': device.deviceId,
@@ -52,6 +54,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> updateDevice(Device device) async {
+
     final response = await GraphQLService(parentalControlApiUrl)
         .performMutation(GraphQLRaw.updateDevice, variables: {
       'id': device.id,
@@ -71,6 +74,7 @@ class GraphQLRequests {
   }
 
   Future<Map<String, dynamic>?> getDeviceById(String id) async {
+
     final response = await GraphQLService(parentalControlApiUrl)
         .performQuery(GraphQLRaw.getDeviceById, variables: {
       'id': id,
@@ -90,6 +94,7 @@ class GraphQLRequests {
 
   Future<Map<String, dynamic>?> pushLog(
       String domain, String pageUrl, String deviceId, String category) async {
+
     final response = await GraphQLService(parentalControlApiUrl)
         .performQuery(GraphQLRaw.pushLog, variables: {
       'domain': domain,
@@ -111,6 +116,7 @@ class GraphQLRequests {
   }
 
   Future<List<Object?>> childsActivities(String deviceId) async {
+
     final response = await GraphQLService(parentalControlApiUrl).performQuery(
       GraphQLRaw.childsActivities,
       variables: {

@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
 
-
     <application
         android:label="Flutter News Browser"
         android:name="${applicationName}"

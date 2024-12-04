@@ -1,5 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/Db/hive_db_helper.dart';
@@ -67,6 +67,7 @@ class _RegisterDeviceWidgetState extends State<RegisterDeviceWidget> {
                   await HiveDBHelper.createDevice(device);
                   debugPrint("///sdfdsfssdf/${HiveDBHelper.getDevice()}");
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
               child: const Text("Add"),
@@ -86,6 +87,7 @@ class _RegisterDeviceWidgetState extends State<RegisterDeviceWidget> {
             TextEditingController(text: deviceName);
 
         showDialog(
+          // ignore: use_build_context_synchronously
           context: context,
           builder: (context) => AlertDialog(
             title: const Text("Edit Device Name"),
@@ -106,6 +108,7 @@ class _RegisterDeviceWidgetState extends State<RegisterDeviceWidget> {
                   device.deviceName = deviceName;
                   await GraphQLRequests().updateDevice(device);
                   await HiveDBHelper.updateDevice(deviceName);
+                  // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 },
                 child: const Text("Add"),
