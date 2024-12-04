@@ -1,3 +1,5 @@
+
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/Db/hive_db_helper.dart';
@@ -104,7 +106,6 @@ class _RegisterDeviceWidgetState extends State<RegisterDeviceWidget> {
               TextButton(
                 onPressed: () async {
                   device.deviceName = deviceName;
-                  debugPrint("/////////////" + device.toString());
                   await GraphQLRequests().updateDevice(device);
                   await HiveDBHelper.updateDevice(deviceName);
                   // ignore: use_build_context_synchronously

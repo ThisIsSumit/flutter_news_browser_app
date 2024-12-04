@@ -79,6 +79,7 @@ dependencies:
   unique_identifier: ^0.3.0
   graphql_flutter: ^5.2.0-beta.7
   device_info_plus:
+  workmanager: ^0.5.2
   
  
 

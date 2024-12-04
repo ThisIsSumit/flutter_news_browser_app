@@ -84,4 +84,27 @@ query childsActivities($deviceId: String ) {
     }
 }
  ''';
+  static const createSession = r'''
+mutation createSession($ class:String!,$subject: String!,
+$chapter: String!,
+$topic: String!,
+$subtopic: String!,
+$duration: Int!){
+  createSession(class:$class,subject:$subject,chapter:$chapter,topic:$topic,subtopic:$subtopic,
+  duration:$duration){
+    _id
+  }
+}
+
+ ''';
+  static const getBooks = r''' 
+  query getBooks {
+  getBooks {
+    id
+    class
+    subject
+    board
+  }
+}
+  ''';
 }

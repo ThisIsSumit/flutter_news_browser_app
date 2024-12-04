@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/screens/category_selection_screen.dart';
 import 'package:hive_flutter/adapters.dart';

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/browser.dart';
-import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
 
 class SourcesSelectionScreen extends StatefulWidget {
-  const SourcesSelectionScreen({Key? key});
+  const SourcesSelectionScreen({super.key, Key? sd});
 
   @override
   State<SourcesSelectionScreen> createState() => _SourcesSelectionScreenState();
@@ -47,7 +46,6 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
           selectedSources = box.get('selectedSources') ?? [];
         });
       } on Exception catch (e) {
-        // TODO
         debugPrint(e.toString());
       }
     }

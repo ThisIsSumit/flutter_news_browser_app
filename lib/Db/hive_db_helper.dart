@@ -18,8 +18,10 @@ class HiveDBHelper {
     await Hive.openBox('rules');
     await Hive.openBox('device');
     await Hive.openBox('child_devices');
+    await Hive.openBox('kiosk_mode');
     await Hive.openBox<MostVisitedWebsiteModel>('mostVisitedWebsites');
     await Hive.openBox<List<String>>('preferences');
+    await Hive.openBox('token');
     debugPrint("Initialized Hive DB successfully");
   }
 
@@ -80,5 +82,21 @@ class HiveDBHelper {
     List<String> childDevices = box.get("child_devices") ?? [];
     childDevices.removeAt(index);
     await box.put("child_devices", childDevices);
+  }
+
+  static setKioskMode(bool x) async {
+    await box.put('kiosk_mode', x);
+  }
+
+  static bool getKioskMode() {
+    return box.get('kiosk_mode') ?? false;
+  }
+
+  static setToken(DateTime x) async {
+    await box.put('token', x);
+  }
+
+  static DateTime? getToken() {
+    return box.get('token');
   }
 }
