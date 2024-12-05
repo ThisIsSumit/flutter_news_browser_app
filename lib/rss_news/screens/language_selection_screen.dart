@@ -35,8 +35,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   Future<void> _submit() async {
     if (selectedLanguages.isNotEmpty) {
       final box = Hive.box<List<String>>('preferences');
+      debugPrint("dfdg" + selectedLanguages.toString());
       await box.put('selectedLanguages',
           selectedLanguages.map((e) => e.toString()).toList());
+      // debugPrint(selectedLanguages.toString());
       if (widget.fromWelcomeScreen) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

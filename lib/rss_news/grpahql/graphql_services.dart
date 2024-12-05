@@ -3,6 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class GraphQLService {
   late GraphQLClient client;
+
   GraphQLService(String apiLink) {
     final Link link = HttpLink(apiLink);
     client = GraphQLClient(
