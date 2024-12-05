@@ -6,6 +6,8 @@ import 'package:flutter_browser/rss_news/grpahql/graphql_services.dart';
 import 'package:flutter_browser/rss_news/models/book_model.dart';
 import 'package:flutter_browser/rss_news/models/device_model.dart';
 import 'package:flutter_browser/rss_news/models/feed_model.dart';
+import 'package:flutter_browser/rss_news/models/page_attributes_model.dart';
+import 'package:flutter_browser/rss_news/utils/debug.dart';
 import 'package:flutter_browser/rss_news/utils/show_snackbar.dart';
 
 class GraphQLRequests {
@@ -174,6 +176,44 @@ class GraphQLRequests {
     return data != null && data.containsKey('getBooks')
         ? (data['getBooks'] as List<dynamic>)
             .map((e) => Book.fromMap(e as Map<String, dynamic>))
+            .toList()
+        : null;
+  }
+
+  Future<Map<String, dynamic>?> getDeviceBydeviceID(String deviceId) async {
+    final response = await GraphQLService(parentalControlApiUrl)
+        .performQuery(GraphQLRaw.getDeviceBydeviceID, variables: {
+      "deviceID": deviceId,
+    });
+
+    if (response.hasException) {
+      showSnackBar(message: response.exception.toString());
+      return null;
+    }
+
+    final Map<String, dynamic>? data = response.data;
+
+    return data != null && data.containsKey('getDeviceBydeviceID')
+        ? data['getDeviceBydeviceID'] as Map<String, dynamic>?
+        : null;
+  }
+
+  Future<List<PageAttributes>?> getPageAttributesByBookID(String bookID) async {
+    final response = await GraphQLService(erpSchoolApiUrl).performQuery(
+        GraphQLRaw.getPageAttributesByBookID,
+        variables: {'bookID': bookID});
+    debug('Has exeption: ${response.exception}');
+
+    if (response.hasException) {
+      showSnackBar(message: 'GraphQL Error: ${response.exception}');
+      return null;
+    }
+
+    final Map<String, dynamic>? data = response.data;
+
+    return data != null && data.containsKey('getPageAttributesByBookID')
+        ? (data['getPageAttributesByBookID'] as List<dynamic>)
+            .map((e) => PageAttributes.fromMap(e as Map<String, dynamic>))
             .toList()
         : null;
   }

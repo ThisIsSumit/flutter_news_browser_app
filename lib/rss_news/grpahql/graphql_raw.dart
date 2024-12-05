@@ -97,7 +97,7 @@ $duration: Int!){
 }
 
  ''';
-  static const getBooks = r''' 
+  static const getBooks = r'''
   query getBooks {
   getBooks {
     id
@@ -107,4 +107,25 @@ $duration: Int!){
   }
 }
   ''';
+  static const getDeviceBydeviceID = r'''
+    query getDeviceBydeviceID($deviceID:String){
+  getDeviceBydeviceID(deviceID:$deviceID){
+    deviceName
+    _id
+  }
+}
+  
+  ''';
+  static const getPageAttributesByBookID =
+      r'''query getPageAttributesByBookID($bookID: String!) {
+  getPageAttributesByBookID(bookID: $bookID) {
+    id
+    pageNumber
+    bookID
+    text
+    type
+    order
+  }
+}
+''';
 }

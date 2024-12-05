@@ -16,64 +16,79 @@ class RegisterDeviceWidget extends StatefulWidget {
 }
 
 class _RegisterDeviceWidgetState extends State<RegisterDeviceWidget> {
-  void showAddingDilog() async {
-    String deviceName = "";
-    // String? groupId;
-    // String? profileId;
-    TextEditingController deviceNameController =
-        TextEditingController(text: deviceName);
-    // TextEditingController groupIDController = TextEditingController();
-    // TextEditingController profileIDController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-          title: const Text("Add your device"),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            TextField(
-              onChanged: (value) => deviceName = value,
-              controller: deviceNameController,
-              decoration: const InputDecoration(labelText: "Device Name"),
-            ),
-            // TextField(
-            //   onChanged: (value) => groupId = value,
-            //   controller: groupIDController,
-            //   decoration: const InputDecoration(labelText: "Group ID"),
-            // ),
-            // TextField(
-            //   onChanged: (value) => profileId = value,
-            //   controller: profileIDController,
-            //   decoration: const InputDecoration(labelText: "Profile ID"),
-            // ),
-          ]),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                Device device = Device(
-                  deviceId: deviceId,
-                  deviceName: deviceName,
-                  // defulat ids
-                  groupId: "67289da09753666bcf4cf78a",
-                  profileId: "67289ee59753666bcf4cf7db",
-                );
-                final op = await GraphQLRequests().createDevice(device);
+  static checkDeviceAlreadyRegisterd() async {
+    final res = await GraphQLRequests().getDeviceBydeviceID(deviceId);
+    if (res != null) {
+      Device device = Device(
+        deviceId: deviceId,
+        deviceName: res["deviceName"],
+        id: res["_id"],
+        groupId: "67289da09753666bcf4cf78a",
+        profileId: "67289ee59753666bcf4cf7db",
+      );
+      await HiveDBHelper.createDevice(device);
+    }
+  }
 
-                /// use this _id to perform update mutation
-                if (op != null) {
-                  device.id = op["_id"];
-                  await HiveDBHelper.createDevice(device);
-                  debugPrint("///sdfdsfssdf/${HiveDBHelper.getDevice()}");
-                }
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
-              },
-              child: const Text("Add"),
-            )
-          ]),
-    );
+  Future<void> showAddingDilog() async {
+    {
+      String deviceName = "";
+      // String? groupId;
+      // String? profileId;
+      TextEditingController deviceNameController =
+          TextEditingController(text: deviceName);
+      // TextEditingController groupIDController = TextEditingController();
+      // TextEditingController profileIDController = TextEditingController();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            title: const Text("Add your device"),
+            content: Column(mainAxisSize: MainAxisSize.min, children: [
+              TextField(
+                onChanged: (value) => deviceName = value,
+                controller: deviceNameController,
+                decoration: const InputDecoration(labelText: "Device Name"),
+              ),
+              // TextField(
+              //   onChanged: (value) => groupId = value,
+              //   controller: groupIDController,
+              //   decoration: const InputDecoration(labelText: "Group ID"),
+              // ),
+              // TextField(
+              //   onChanged: (value) => profileId = value,
+              //   controller: profileIDController,
+              //   decoration: const InputDecoration(labelText: "Profile ID"),
+              // ),
+            ]),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Device device = Device(
+                    deviceId: deviceId,
+                    deviceName: deviceName,
+                    // defulat ids
+                    groupId: "67289da09753666bcf4cf78a",
+                    profileId: "67289ee59753666bcf4cf7db",
+                  );
+                  final op = await GraphQLRequests().createDevice(device);
+
+                  /// use this _id to perform update mutation
+                  if (op != null) {
+                    device.id = op["_id"];
+                    await HiveDBHelper.createDevice(device);
+                    debugPrint("///sdfdsfssdf/${HiveDBHelper.getDevice()}");
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text("Add"),
+              )
+            ]),
+      );
+    }
   }
 
   void showEditDilog() async {
