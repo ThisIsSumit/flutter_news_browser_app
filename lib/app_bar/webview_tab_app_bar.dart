@@ -1,10 +1,8 @@
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_browser/app_bar/url_info_popup.dart';
-
 import 'package:flutter_browser/custom_image.dart';
 import 'package:flutter_browser/main.dart';
 import 'package:flutter_browser/models/browser_model.dart';
@@ -22,7 +20,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_extend/share_extend.dart';
+// import 'package:share_extend/share_extend.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 import '../animated_flutter_browser_logo.dart';
@@ -1110,7 +1108,7 @@ class _WebViewTabAppBarState extends State<WebViewTabAppBar>
               ElevatedButton(
                 child: const Text("Share"),
                 onPressed: () async {
-                  await ShareExtend.share(file.path, "image");
+                  // await ShareExtend.share(file.path, "image");
                 },
               )
             ],

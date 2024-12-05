@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/browser.dart';
+import 'package:flutter_browser/rss_news/services/check_device_registered.dart';
 import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
 
@@ -58,6 +59,7 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
     if (selectedSources.isNotEmpty) {
       final box = Hive.box<List<String>>('preferences');
       await box.put('selectedSources', selectedSources);
+      await checkDeviceAlreadyRegisterd();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
