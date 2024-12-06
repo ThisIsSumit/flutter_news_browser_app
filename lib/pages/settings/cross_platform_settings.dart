@@ -4,8 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_browser/models/browser_model.dart';
 import 'package:flutter_browser/models/search_engine_model.dart';
 import 'package:flutter_browser/models/webview_model.dart';
-
+import 'package:flutter_browser/rss_news/widgets/kiosk_mode_switch.dart';
+import 'package:flutter_browser/rss_news/widgets/register_child_widget.dart';
+import 'package:flutter_browser/rss_news/widgets/register_device_widget.dart';
 import 'package:flutter_browser/rss_news/widgets/rules_widget.dart';
+import 'package:flutter_browser/rss_news/widgets/session_widget.dart';
 import 'package:flutter_browser/util.dart';
 import 'package:flutter_browser/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -125,7 +128,11 @@ class _CrossPlatformSettingsState extends State<CrossPlatformSettings> {
           }
         },
       ),
+      const RegisterDeviceWidget(),
+      const RegisterChildWidget(),
       const RulesWidget(),
+      const SessionWidget(),
+      const KioskModeSwitch(),
       SwitchListTile(
         title: const Text("Block Ads"),
         subtitle: const Text("Removes the Html elements present in Rules"),

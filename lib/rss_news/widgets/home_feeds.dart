@@ -6,7 +6,7 @@ import '../constants/constants.dart';
 
 class HomeFeeds extends StatefulWidget {
   // final Future<List<GGetFeedsData_getFeeds>> customLanguageFeeds;
-  final Future<List<Feed>> customLanguageFeeds;
+  final List<Feed> customLanguageFeeds;
 
   const HomeFeeds({Key? key, required this.customLanguageFeeds});
 

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/main.dart';
+import 'package:flutter_browser/browser.dart';
+import 'package:flutter_browser/rss_news/services/check_device_registered.dart';
 import 'package:flutter_browser/rss_news/services/fetch_static_feeds.dart';
 import 'package:hive/hive.dart';
 
 class SourcesSelectionScreen extends StatefulWidget {
-  const SourcesSelectionScreen({Key? key});
+  const SourcesSelectionScreen({super.key, Key? sd});
 
   @override
   State<SourcesSelectionScreen> createState() => _SourcesSelectionScreenState();
@@ -33,16 +34,21 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
     final box = Hive.box<List<String>>('preferences');
     final languages = box.get('selectedLanguages');
     final categories = box.get('selectedCategories');
+    debugPrint('cat$categories');
     if (languages != null && categories != null) {
-      final sourceFeeds = await _fetchStaticFeeds.feedsBySelectedCategories(
-          languages, categories);
-      debugPrint(sourceFeeds[0].toString());
-      final sources = sourceFeeds.map((feed) => feed.source).toSet().toList();
-      // debugPrint(sources.toString());
-      setState(() {
-        allSources = sources;
-        selectedSources = box.get('selectedSources') ?? [];
-      });
+      try {
+        final sourceFeeds = await _fetchStaticFeeds.feedsBySelectedCategories(
+            languages, categories);
+        debugPrint(sourceFeeds[0].toString());
+        final sources = sourceFeeds.map((feed) => feed.source).toSet().toList();
+        // debugPrint(sources.toString());
+        setState(() {
+          allSources = sources;
+          selectedSources = box.get('selectedSources') ?? [];
+        });
+      } on Exception catch (e) {
+        debugPrint(e.toString());
+      }
     }
     setState(() {
       _isLoading = false;
@@ -52,11 +58,12 @@ class _SourcesSelectionScreenState extends State<SourcesSelectionScreen> {
   void _saveSelectedSources() async {
     if (selectedSources.isNotEmpty) {
       final box = Hive.box<List<String>>('preferences');
-      box.put('selectedSources', selectedSources);
+      await box.put('selectedSources', selectedSources);
+      await checkDeviceAlreadyRegisterd();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const FlutterBrowserApp(),
+          builder: (context) => const Browser(),
         ),
       );
     } else {

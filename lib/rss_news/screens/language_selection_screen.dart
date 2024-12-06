@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_browser/rss_news/screens/category_selection_screen.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -5,9 +7,10 @@ import 'package:hive_flutter/adapters.dart';
 import '../constants/constants.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
- final bool fromWelcomeScreen;
+  final bool fromWelcomeScreen;
   const LanguageSelectionScreen({
-    Key? key, required this.fromWelcomeScreen,
+    Key? key,
+    required this.fromWelcomeScreen,
   });
 
   @override
@@ -32,10 +35,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   Future<void> _submit() async {
     if (selectedLanguages.isNotEmpty) {
       final box = Hive.box<List<String>>('preferences');
+      debugPrint("dfdg" + selectedLanguages.toString());
       await box.put('selectedLanguages',
           selectedLanguages.map((e) => e.toString()).toList());
       // debugPrint(selectedLanguages.toString());
-      if(widget.fromWelcomeScreen){
+      if (widget.fromWelcomeScreen) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Great! please Swipe right to select categories.'),
@@ -43,15 +47,16 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             backgroundColor: Colors.lightBlue,
           ),
         );
-      }else{
+      } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const CategoriesSelectionScreen(fromWelcomeScreen: false,),
+            builder: (context) => const CategoriesSelectionScreen(
+              fromWelcomeScreen: false,
+            ),
           ),
         );
       }
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
